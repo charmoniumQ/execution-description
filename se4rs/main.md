@@ -30,6 +30,7 @@ papersize: letter
 
 For the purposes of this paper, we will use the following terms and definitions:
 
+<!-- This definition contains the phrase to be defined-->
 - Software experiment: an experiment defined by software.
   - The inputs may be the outputs of a physical experiment.
   - The experiment may be computing of some statistic from raw data.
@@ -49,7 +50,7 @@ In theory, any Turing-complete computer can emulate the behavior of any other Tu
 At an abstract level, any software defined for one computer should be runnable on another.
 Indeed, there are "virtual machine" emulators.
 One can do even better by defining a high-level software language whose compilers or interpreters can be implemented on multiple machines.
-However, even with many protability tools, re-executing software experiments still often requires manual labor.
+However, even with many portability tools, re-executing software experiments still often requires manual labor.
 Rather than a technical problem with software executors, this is due to there being only nebulous languages for describing how to execute a software experiment.
 
 Such a description language would minimally need to specify the software environment and specify a command which runs the experiment.
@@ -59,8 +60,10 @@ Automatically identifying the "main" command which executes the experiment is cr
 * Artifact evaluators
 * Users seeking to replicate a paper
 * Large-scale re-execution experiments
+<!-- If the first two of these are accustomed to manual effort, the automation of finding the main command is not really critical, is it?
+It's just that they need some way of identifying it _at all_-->
 
-The former two are accusomted to spending manual effort to find this command, but in the latter case, one might be re-executing thousands of experiments, so if any manual labor is infeasible.
+The former two are accustomed to spending manual effort to find this command, but in the latter case, one might be re-executing thousands of experiments, so if any manual labor is infeasible.
 The language should describe what the command does, in such a way that a machine can distinguish which command should be run to re-execute the software experiment done in support of a scientific publication.
 
 # Existing standards for execution descriptions of software experiments
@@ -72,6 +75,7 @@ Of course, there are some existing standards and conventions that are used to de
   E.g., software experimentalists might use GNU Make to execute their software experiment.
   However, build systems do not fully describe the computational environment (e.g., one might have to install system libraries before running `make`).
   There is only a loose convention over how to name the targets (e.g., should one run `make all`, `make`, or `make figure_1.png` to run the computational experiment from scratch?).
+  <!-- There are a lot of e.g.s-->
 
 - **Main script**:
   Often there is a main script in the project root (`run.sh` or `main.py`).
@@ -82,13 +86,14 @@ Of course, there are some existing standards and conventions that are used to de
 - **Software environment definitions**:
   Language-neutral (e.g., Spack, Conda, Nix, Guix), and language-specific (e.g., Cargo, Python Virtualenv) environment managers specify the software environment in which the experiment is run.
   They do not, however, specify the command to run the experiment itself.
-  For Nix and Guix, one might make the experimental output a "package" within the system, but this is quite rare and poorly supported; For example, there is no way to launch a multi-node MPI job from within the Nix or Guix sandbox, and there is no way of describing which package is the experiment.
+  For Nix and Guix, one might make the experimental output a "package" within the system, but this is quite rare and poorly supported; for example, there is no way to launch a multi-node MPI job from within the Nix or Guix sandbox, and there is no way of describing which package is the experiment.
 
 - **Continuous integration (CI) script**:
   CI scripts often check an experiment in a defined computational environment as deeply as is feasible given limited CI computational resources.
   However, there are usually not enough computational resources to execute the experiment, and there is no language for describing which, if any, of the CI script executes the software experiment.
 
 - **Workflow scripts**:
+  <!-- You should define a DAG here-->
   A workflow script describes a DAG of tasks for a computational experiment.
   The tasks can be native or containerized.
   In practice, workflow scripts may not contain the inputs needed to run the experiment.
@@ -107,7 +112,7 @@ The point of this document is to argue that the community should spend effort de
 
 ## Semantic web description...
 
-This language could be implemented as an vocabulary for linked data in the semantic web.
+This language could be implemented as a vocabulary for linked data in the semantic web.
 Linked data is preferrable for these reasons:
 
 1. Linked data is open to extensions.
@@ -132,7 +137,7 @@ The template of RDF/XML looks like this:
 
 According to the RDF/XML specification, This imports several other vocabularies behind a namespace.
 E.g., `rdf:type` refers to `type` in the `rdf` namespace, which points to `http://www.w3.org/1999/02/22-rdf-syntax-ns#`.
-XML tags with no namespace are resolved within the default namespace, which is our proposed execution-descriptoin vocabulary.
+XML tags with no namespace are resolved within the default namespace, which is our proposed execution-description vocabulary.
 
 ## ... of a list of commands ...
 
@@ -167,9 +172,11 @@ The CiTO vocabulary <!-- TODO: cite --> already defines a vocabulary for describ
 
 If the publisher hosts an RDF description at the URL "https://doi.org/10.1234/123456789" when the HTTP request content-type header is `application/rdf+xml`, then this creates a web of linked data.
 The publisher may have the title, authors, date published, and other metadata using Dublin Core metadata terms, for example.
+<!-- cite Dublin core metadata terms -->
 This is the dream of linked data: machine-readable data by different authors hosted in different locations linking together seamlessly.
 Even if the publisher does not have an RDF+XML description, third parties can make claims about "https://doi.org/10.1234/123456789", although those claims would not be as easily discoverable.
 One could even reference a Nanopublication, which is a semantic web description of the scientific claim.
+<!-- cite something for Nanopublication, too -->
 
 The purpose description can be even more granular, using the DoCO vocabulary <!-- TODO: cite -->, which describes documents.
 
@@ -272,26 +279,29 @@ With this complete, one can even do automated parameter-space search studies, mu
 ## ... with retrospective provenance
 
 Retrospective provenance seeks to encode how we got to a specific result.
+<!-- bit-by-bit reproducibility should be relatively rare in computational science and engineering, right?-->
+<!-- even for summary statistics, I'd expect some variation just due to rounding... though better to at least have it to decide if it's "close enough," but that will be a non-automatable decision.-->
 If one expects bit-by-bit reproducibility, the authors can put a hash of the intermediate results into the provenance description; if they only expect approximate reproducibility, they can put summary statistics of intermediate results into the provenance description.
 A tool might use system-call interposition to learn about a processes reads, writes, and forks.
 This would be better at identifying and recording intermediate results.
 When reproducing some software experiment, users can check the intermediate results to see where they begin to differ.
 Wfprov is one vocabulary for specifying retrospective provenance, and there is already an experimental plugin for Nextflow which targets wfprov. <!-- https://github.com/Sage-Bionetworks-Workflows/nf-prov -->
 
+<!-- Developers may not know the answers to those questions...-->
 Users may also want to know how much computational resources (CPU time, disk space, and RAM) the software expeirment require.
 Provenance is the ideal place to put this.
-This way, users seeking to reproduce the software experiment know how many resources to request (ahead-of-time allocations are usuually required for batch-scheduled machine).
+This way, users seeking to reproduce the software experiment know how many resources to request (ahead-of-time allocations are usuually required for batch-scheduled machines).
 
 # Making easy on-ramps for adoption
 
-The execution language should seek to describe existing software frameworks not replace them.
+The execution language should seek to describe existing software frameworks, not replace them.
 In particular, execution should not replace workflow engines.
 They should instead be wrapped as process-nodes within the execution language.
 Software experimentalists can continue using their existing build-system and workflow.
 
 A execution description could even be "captured" from an interactive shell session with the user.
 They would invoke a shell that records every command, its exit status, its read-files, and its write-files (using syscall interposition).
-The user would exeucte their build-system like normal within this shell.
+The user would execute their build-system like normal within this shell.
 When the user exits, the shell will create a DAG based on the read-files and write-files.
 For each output file that is not consumed by another command, the shell would prompt the user to describe that command's purpose.
 Finally, the shell would output a execution description.
@@ -310,6 +320,7 @@ A program similar to the one described above could automatically generate a exec
 <!-- Cite FlaPy, and the instructions it deduces are thrown away -->
 In the best case, the execution description would be uploaded to the same repository or location that contains the source for the software experiment. This way it can be maintained and used by the original developers, and it is easily discoverable by users.
 Alternatively, execution descriptions could be placed in a central execution-description repository owned by software researchers.
+<!--What entity would do this?-->
 The execution description is linked data, so it can live anywhere, and existing strategies for finding, filtering, and trusting linked data sets would work for execution descriptions.
 
 This is similar to the approach taken by Python for type annotations.
@@ -318,13 +329,14 @@ Type annotations are easiest to maintain in the original repository, but if the 
 
 # Incentives for software experimentalists to maintain execution descriptions
 
-Software experimentalists are incentized to describe their project this way to benefit from the work of software researchers.
+Software experimentalists are incentivized to describe their project this way to benefit from the work of software researchers.
 When software researchers do a large-scale execution study, it is a "free" reproduction of their work.
+<!-- I challenge the assumption that this reproduction of a work is actually something of perceived value to the original experimentalists.-->
 
 <!-- TODO: connect to RO-crate -->
 To get an artifact evaluation badge, normally authors would have to write a natural language description of what the software environment, what the commands are, how to run them, and where does the data end up.
 The artifact evaluator has to read, interpret, and execute their description by hand.
-A execution description could make this nearly automatic; if a execution description exists, the artifact evaluator uses a executor which understands the language and runs all of the commands that reference the manuscript in their `purpose` tag.
+An execution description could make this nearly automatic; if a execution description exists, the artifact evaluator uses an executor which understands the language and runs all of the commands that reference the manuscript in their `purpose` tag.
 The only manual labor is comparing these results to those in the paper.
 Even that comparison can be simplified, if the last step in the execution description outputs a boolean representing "is the hypothesis proven?"; the reviewer just needs to see that all of these output "true".
 
