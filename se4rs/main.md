@@ -4,12 +4,12 @@ fail-if-warnings: yes
 table-of-contents: no
 strip-comments: yes
 citeproc: yes
-cite-method: citeproc # or natbib or biblatex
+cite-method: biblatex # or natbib or biblatex
 bibliography: main.bib
 link-citations: yes # in-text citation -> biblio entry
 link-bibliography: yes # URLs in biblio
 notes-after-punctuation: yes
-title: Write provenance for software experiments
+title: "Wanted: standards for automatic reproducibility of computational experiments"
 #shortitle:
 #subtitle:
 date: 2023-05-22
@@ -19,12 +19,37 @@ author:
     email: grayson5@illinois.edu
     affiliation:
       institution: University of Illinois Urbana-Champaign
-      department: Department of Computer Science
+      department:
+	    - Department of Computer Science
       streetaddress:  201 North Goodwin Avenue MC 258
       city: Urbana
       state: IL
       country: USA
       postcode: 61801-2302
+  - name: Joshua Teves
+    orcid: 
+    email: jbteves@sandia.gov
+    affiliation:
+      department:
+	    - Software Engineering and Research Department
+      institution: Sandia National Laboratories
+      city: Albuquerque
+      state: NM
+      country: USA
+      postcode: 87123
+      streetaddress: 1515 Eubank Blvd SE1515 Eubank Blvd SE
+  - name: Reed Milewicz
+    orcid: 0000-0002-1701-0008
+    email: rmilewi@sandia.gov
+    affiliation:
+      department:
+	    - Software Engineering and Research Department
+      institution: Sandia National Laboratories
+      city: Albuquerque
+      state: NM
+      country: USA
+      postcode: 87123
+      streetaddress: 1515 Eubank Blvd SE1515 Eubank Blvd SE
   - name: Daniel S. Katz
     orcid: 0000-0001-5934-7525
     email: dskatz@illinois.edu
@@ -40,23 +65,13 @@ author:
       state: IL
       country: USA
       postcode: 61801-2302
-  - name: Reed Milewicz
-    orcid: 0000-0002-1701-0008
-    email: rmilewi@sandia.gov
-    affiliation:
-      department: Software Engineering and Research Department
-      institution: Sandia National Laboratories
-      city: Albuquerque
-      state: NM
-      country: USA
-      postcode: 87123
-      streetaddress: 1515 Eubank Blvd SE1515 Eubank Blvd SE
   - name: Darko Marinov
     orcid: 0000-0001-5023-3492
     email: marinov@illinois.edu
     affiliation:
       institution: University of Illinois Urbana-Champaign
-      department: Department of Computer Science
+      department:
+	    - Department of Computer Science
       streetaddress:  201 North Goodwin Avenue MC 258
       city: Urbana
       state: IL
@@ -98,59 +113,52 @@ publisher:
   #ccsxml: |
   #  idk
 #acks:
+topmatter: printacmref=false
+shortauthors: Grayson et al.
 ---
 
-# Glossary
-
-For the purposes of this paper, we will use the following terms and definitions:
-
-<!-- This definition contains the phrase to be defined-->
-- Software experiment: an experiment defined by software.
-  - The inputs may be the outputs of a physical experiment.
-  - The experiment may be computing of some statistic from raw data.
-  - The output of the experiment may include the performance of the execution.
-
-- Software experimentalist: one who writes software experiments.
-
-- Software researcher: one who studies software engineering aspects of software experiments.
-  Software experimentalists write software experiments, which are studied by software researchers, who write recommendations for software experimentalists.
-
-<!-- TODO:
-- Software environment: -->
+<!--
+Terms:
+- computational experiment
+- computational scientist
+- software-engineering researcher
+-->
 
 # Introduction
 
-In theory, any Turing-complete computer can emulate the behavior of any other Turing-complete computer.
-At an abstract level, any software defined for one computer should be runnable on another.
-Indeed, there are "virtual machine" emulators.
-One can do even better by defining a high-level software language whose compilers or interpreters can be implemented on multiple machines.
-However, even with many portability tools, re-executing software experiments still often requires manual labor.
-Rather than a technical problem with software executors, this is due to there being only nebulous languages for describing how to execute a software experiment.
-
-Such a description language would minimally need to specify the software environment and specify a command which runs the experiment.
+A computational experiment is reproducible if another team using the same experimental infrastructure can make a measurement that concurs with the original.
+In practice, reproducers will still need to look at the code by hand to see how to build necessary libraries, configure parameters, find data, and invoke the experiment; it is not _automatic_.
+To enable automatic reproducibility, one would need a description language which could list the relevant commands with machine-readable metadata attached to describe what the command does.
 It is not enough for the language to merely contain this command in a heap of other commands; e.g., a Makefile which defines a rule for executing the experiment alongside rules for compiling intermediate pieces is not sufficient, because there is no machine-readable way to know which of the Make rules executes the experiment.
+
 Automatically identifying the "main" command which executes the experiment is critical for:
 
-* Artifact evaluators
-* Users seeking to replicate a paper
-* Large-scale re-execution experiments
-<!-- If the first two of these are accustomed to manual effort, the automation of finding the main command is not really critical, is it?
-It's just that they need some way of identifying it _at all_-->
+* **Artifact evaluators**:
+  With manual reproducibility, artifact evaluators spend time learning how to set up, configure, build, and review the artifact.
+  Automatic reproducibility would be the canonical place for experiment computational scientists to concisely communicate these steps. Unlike `README.txt` it would be human- and machine-readable.
 
-The former two are accustomed to spending manual effort to find this command, but in the latter case, one might be re-executing thousands of experiments, so if any manual labor is infeasible.
-The language should describe what the command does, in such a way that a machine can distinguish which command should be run to re-execute the software experiment done in support of a scientific publication.
+* **Users seeking to re-execute with different parameters**:
+  With manual reproducibility, users have to dig through the experiment's documentation or, more likely, source code to discover how to supply parameters.
+  Automatic reproducibility can also specify how to set these parameters.
 
-# Existing standards for execution descriptions of software experiments
+* **Large-scale re-execution experiments**:
+  Collberg and Proebsting \cite{collberg_repeatability_2016} do a large-scale study of repeatability of computational experiments in computer science with manual effort.
+  While their results are seminal, it is difficult to repeat in other domains or extend that experiment without spending a huge amount of human-hours figuring out how to run experiments.
+  If Collberg and Proebsting or some other software-engineering researchers _do_ embark to figure out how to run a certain experiment, there is standardized way for them to share their steps with other researchers.
+
+<!--
+# Existing standards for execution descriptions of computational experiments
 
 Of course, there are some existing standards and conventions that are used to describe how to run a computational experiment.
 
 - **Build systems**:
-  While "building" may refer strictly to compiling and linking, many build systems are general enough to be repurposed for describing how to execute a software experiment.
-  E.g., software experimentalists might use GNU Make to execute their software experiment.
+  While "building" may refer strictly to compiling and linking, many build systems are general enough to be repurposed for describing how to execute a computational experiment.
+  E.g., computational experiments might use GNU Make.
   However, build systems do not fully describe the computational environment (e.g., one might have to install system libraries before running `make`).
   There is only a loose convention over how to name the targets (e.g., should one run `make all`, `make`, or `make figure_1.png` to run the computational experiment from scratch?).
-  <!-- There are a lot of e.g.s-->
+  <!-- TODO: There are a lot of e.g.s--><!--
 
+These two cases are less important to my argument
 - **Main script**:
   Often there is a main script in the project root (`run.sh` or `main.py`).
   However, In practice main scripts rarely define the software environment; rather they expect to be run from within the proper computational environment.
@@ -164,10 +172,10 @@ Of course, there are some existing standards and conventions that are used to de
 
 - **Continuous integration (CI) script**:
   CI scripts often check an experiment in a defined computational environment as deeply as is feasible given limited CI computational resources.
-  However, there are usually not enough computational resources to execute the experiment, and there is no language for describing which, if any, of the CI script executes the software experiment.
+  However, there are usually not enough computational resources to execute the experiment, and there is no language for describing which, if any, of the CI script executes the computational experiment.
 
 - **Workflow scripts**:
-  <!-- You should define a DAG here-->
+  <!-- TODO: define a DAG --><!--
   A workflow script describes a DAG of tasks for a computational experiment.
   The tasks can be native or containerized.
   In practice, workflow scripts may not contain the inputs needed to run the experiment.
@@ -176,15 +184,16 @@ Of course, there are some existing standards and conventions that are used to de
 
 A Dockerfile is a combination of the above: a software environment definition composed with an optional main script (in the `CMD`).
 Sometimes additional context is needed to build the container (e.g., the files referenceed in `ADD` or `COPY` commands may themselves need to be built).
-While multi-stage containers mitigate this problem, in practice <!-- Cite Henkel --> most Dockerfiles cannot be automatically built.
+While multi-stage containers mitigate this problem, in practice <!-- Cite Henkel --> <!--most Dockerfiles cannot be automatically built.
 Even if they can be built, the `CMD` might require input data or additional arguments, and there is no convention or standard of listing an "example invocation" in a machine-readable way.
+-->
 
-# A new standard for execution-descriptions of software experiments
+# How to get automatic reproducibility
 
-This is not the final proposal for the complete vocabulary; the peer-review process is not well-suited to iterate on the technical details of the execution description.
-The point of this document is to argue that the community should spend effort developing this vocabulary.
+This is not the final proposal for the complete vocabulary; the peer-review process is not well-suited to iterate on technical details.
+The point of this article is to argue that the community should spend effort developing this vocabulary.
 
-## Semantic web description
+## Semantic web
 
 This language could be implemented as a vocabulary for linked data in the semantic web.
 Linked data is preferrable for these reasons:
@@ -194,10 +203,10 @@ Linked data is preferrable for these reasons:
 3. There is already a rich set of ontologies for describing digital and physical resources (RO-crate, wf4prov, software project description, scientific hypotheses, CiTO) in linked data.
 4. There is already a rich ecosystem for authoring ontologies and validating documents within those ontologies.
 
-Linked data can be represented in XML format, which is used for other long-term preservation standards. <!-- TODO: e.g. -->
+Linked data is already used for other long-term preservation standards, such as RO-crate.
 The template of RDF/XML looks like this:
 
-\tiny
+\small
 ```xml
 <?xml version="1.0"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -219,7 +228,7 @@ XML tags with no namespace are resolved within the default namespace, which is o
 
 At a very basic level, one could have commands and the purpose that they serve:
 
-\tiny
+\small
 ```xml
 
 <process>
@@ -234,9 +243,9 @@ At a very basic level, one could have commands and the purpose that they serve:
 \normalsize
 
 While we could define conventions around what to name the content of the "purpose" tag, it would be more powerful if the language could link directly to the claims in the publication.
-The CiTO vocabulary <!-- TODO: cite --> already defines a vocabulary for describing citations.
+The CiTO vocabulary \cite{shotton_cito_2010} already defines a vocabulary for describing citations.
 
-\tiny
+\small
 ```xml
 <process>
   <command>./execute --input data.csv</command>
@@ -256,9 +265,9 @@ Even if the publisher does not have an RDF+XML description, third parties can ma
 One could even reference a Nanopublication, which is a semantic web description of the scientific claim.
 <!-- cite something for Nanopublication, too -->
 
-The purpose description can be even more granular, using the DoCO vocabulary <!-- TODO: cite -->, which describes documents.
+The purpose description can be even more granular, using the DoCO vocabulary \cite{constantin_document_2016}, which describes documents.
 
-\tiny
+\small
 ```
 <purpose>
   <prov:generated>
@@ -271,13 +280,13 @@ The purpose description can be even more granular, using the DoCO vocabulary <!-
 ```
 \normalsize
 
-With this complete, anyone should be able to execute the experiments which generate figures or claims in the paper if they are labeled by the author in this language.
+With this complete, anyone should be able to execute the experiments which generate figures or claims in the paper if they are labeled by the computational scientist in this language.
 
 <!--
 If one command generates data used by other commands, we can use an existing XML workflow vocabularies, such as wfdesc, to define a computational DAG.
 This is more rich than an English string describing the purpose.
 
-\tiny
+\small
 ```xml
 <process>
   <wfdesc:hasOutput>
@@ -305,11 +314,9 @@ Now, a machine can deduce that xy-dataset is an intermediate result used in figu
 If there are multiple processes which consume xy-dataset, one need not execute xy-dataset multiple times.
 -->
 
-## Language feature: specified software environment
-
 One can view specifying the software environment as just prerequisite steps in the computational DAG.
 
-\tiny
+\small
 ```xml
 <process>
   <wfdesc:hasOutput>
@@ -335,11 +342,12 @@ Now a machine knows that the `conda env create ...` must be run before, and the 
 
 The purpose of an execution language is not to usurp the build-system or workflow engine, which both already handle task DAGs; there must be some minimal support for DAGs just for the cases where the DAG of tasks is not already encoded in a build-system or workflow engine.
 
-## Language feature: explicit parameters
-
 In addition to specifying the computational environment and command to run, this language is an ideal candidate to also describe the parameters of the experiment, like:
+One could specify range of valid values or list options.
+With this complete, one can even do automated parameter-space search studies, multi-fidelity uncertainty quantification, automated outcome-preserving input minimization, and other automatic experiments.
 
-\tiny
+<!--
+\small
 ```xml
 <process>
   <command>./generate ${max_resolution} ${rounds}</command>
@@ -354,34 +362,38 @@ In addition to specifying the computational environment and command to run, this
 </wfdesc:Parameter>
 ```
 \normalsize
-
-One could specify range of valid values or list options.
-
-With this complete, one can even do automated parameter-space search studies, multi-fidelity uncertainty quantification, automated outcome-preserving input minimization, and other automatic experiments.
-
-
-## Language feature: with retrospective provenance
+-->
 
 Retrospective provenance seeks to encode how we got to a specific result.
-<!-- bit-by-bit reproducibility should be relatively rare in computational science and engineering, right?-->
-<!-- even for summary statistics, I'd expect some variation just due to rounding... though better to at least have it to decide if it's "close enough," but that will be a non-automatable decision.-->
-If one expects bit-by-bit reproducibility, the authors can put a hash of the intermediate results into the provenance description; if they only expect approximate reproducibility, they can put summary statistics of intermediate results into the provenance description.
+Developers can put summary statistics of intermediate results into the provenance description; if re-executions diverge, users can locate which stage amplifies error the most.
 A tool might use system-call interposition to learn about a processes reads, writes, and forks.
 This would be better at identifying and recording intermediate results.
-When reproducing some software experiment, users can check the intermediate results to see where they begin to differ.
-Wfprov is one vocabulary for specifying retrospective provenance, and there is already an experimental plugin for Nextflow which targets wfprov. <!-- https://github.com/Sage-Bionetworks-Workflows/nf-prov -->
+When reproducing some computational experiment, users can check the intermediate results to see where they begin to differ.
+Wfprov is one vocabulary for specifying retrospective provenance, and there is already an experimental plugin for Nextflow which targets wfprov \cite{grande_nf-prov_2023}.
 
-<!-- Developers may not know the answers to those questions...-->
-Users may also want to know how much computational resources (CPU time, disk space, and RAM) the software expeirment require.
-Provenance is the ideal place to put this.
-This way, users seeking to reproduce the software experiment know how many resources to request (ahead-of-time allocations are usuually required for batch-scheduled machines).
+<!--
+Q: Developers may not know the answers to those questions...
+A: This would not be known a priori by developers; it would be after they do a real execution.
+-->
+Users may also want to know how much computational resources (CPU time, disk space, and RAM) the computational experiment requires.
+Provenance is the ideal place for computational experiments who already ran the experiment to put this information.
+This way, users seeking to reproduce the computational experiment know how many resources to request (ahead-of-time allocations are usuually required for batch-scheduled machines).
 
 # Making easy on-ramps for adoption
 
 The execution language should seek to describe existing software frameworks, not replace them.
 In particular, execution should not replace workflow engines.
 They should instead be wrapped as process-nodes within the execution language.
-Software experimentalists can continue using their existing build-system and workflow.
+Computational experiments can continue using their existing build-system and workflow.
+<!-- TODO: wokr this in
+
+-->
+
+<!-- TODO: three onramps:
+1. Support from workflow
+2. Captured from interactive session
+3. Automatically inferred
+-->
 
 A execution description could even be "captured" from an interactive shell session with the user.
 They would invoke a shell that records every command, its exit status, its read-files, and its write-files (using syscall interposition).
@@ -391,6 +403,7 @@ For each output file that is not consumed by another command, the shell would pr
 Finally, the shell would output a execution description.
 
 In cases where the description cannot be captured by an interactive shell session, one can encode the system of logic that humans would use to deduce the experimental structure.
+This is similar to the approach taken by FlaPy \cite{gruber_empirical_2021}, a large-scale re-execution study for Python unittests, to install the Python environment.
 For example,
 
 1. If `shell.nix`, `flake.nix`, or `environment.yml` exists, then use Nix, Nix flakes, or Conda as the environment for future commands.
@@ -400,25 +413,34 @@ For example,
 4. If `Makefile` exists, set `make` as command.
 ...
 
-A program similar to the one described above could automatically generate a execution description.
-<!-- Cite FlaPy, and the instructions it deduces are thrown away -->
-In the best case, the execution description would be uploaded to the same repository or location that contains the source for the software experiment. This way it can be maintained and used by the original developers, and it is easily discoverable by users.
-Alternatively, execution descriptions could be placed in a central execution-description repository owned by software researchers.
-<!--What entity would do this?-->
+In the best case, the execution description would be uploaded to the same repository or location that contains the source for the computational experiment.
+This way it can be maintained and used by the original developers, and it is easily discoverable by users.
+Alternatively, execution descriptions could be placed in a central execution-description repository owned by software-engineering researchers.
+<!-- TODO: What entity would do this?-->
 The execution description is linked data, so it can live anywhere, and existing strategies for finding, filtering, and trusting linked data sets would work for execution descriptions.
 
 This is similar to the approach taken by Python for type annotations.
 Type annotations are easiest to maintain in the original repository, but if the original repository rejects type annotations, there is still a home for them in typeshed.
-<!-- Cite Python PEP -->
+<!-- TODO: Cite Python PEP -->
 
-# Incentives for software experimentalists to maintain execution descriptions
+# Is this another competing standard?
 
-Software experimentalists are incentivized to describe their project this way to benefit from the work of software researchers.
-When software researchers do a large-scale execution study, it is a "free" reproduction of their work.
-<!-- I challenge the assumption that this reproduction of a work is actually something of perceived value to the original experimentalists.-->
+It is something extra users have to do, but it does not attempt to displace their existing practice.
+
+<!-- TODO elaborate
+Workflow engines also usually cannot manage themsleves; what if a code needs a newer version of the workflow engine currently reading the specification?
+It is simpler to make a agnostic standard that can invoke any workflow engine or other tool of the users' choosing.
+Automatic reproducibility specification should not be perceived competing with workflows; in the best case, the specification would just invoke a workflow engine, which can be supported by the preceding automatic on-ramp.
+ -->
+
+# Incentives for computational scientists to maintain execution descriptions
+
+Computational scientists are incentivized to describe their project this way to benefit from the work of software-engineering researchers.
+When software-engineering researchers do a large-scale execution study, it is a "free" reproduction of their work.
+<!-- TODO: I challenge the assumption that this reproduction of a work is actually something of perceived value to the original experimentalists.-->
 
 <!-- TODO: connect to RO-crate -->
-To get an artifact evaluation badge, normally authors would have to write a natural language description of what the software environment, what the commands are, how to run them, and where does the data end up.
+To get an artifact evaluation badge, normally computational scientists would have to write a natural language description of what the software environment, what the commands are, how to run them, and where does the data end up.
 The artifact evaluator has to read, interpret, and execute their description by hand.
 An execution description could make this nearly automatic; if a execution description exists, the artifact evaluator uses an executor which understands the language and runs all of the commands that reference the manuscript in their `purpose` tag.
 The only manual labor is comparing these results to those in the paper.
@@ -429,7 +451,7 @@ Even that comparison can be simplified, if the last step in the execution descri
 
 <!-- 
 TODO
-# How to exploit for software research
+# How to exploit for software-engineering research
 -->
 
 <!--

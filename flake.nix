@@ -26,18 +26,22 @@
                 packageSet = nix-utils-lib.packageSetRec
                   (self: [
                     (nix-documents-lib.markdownDocument {
-                      src = nix-utils-lib.mergeDerivations {
-                        packageSet = {
-                          "." = ./se4rs;
-                          "support"= ./support;
-                        };
-                      };
+                      src = ./se4rs;
+                      main = "main.md";
+                      name = "se4rs-main.tex";
+                      outputFormat = "latex";
+                      pandocArgs = ["--template=acm-template.tex"];
+                      citeproc = false;
+                    })
+                    (nix-documents-lib.markdownDocument {
+                      src = ./se4rs;
                       main = "main.md";
                       name = "se4rs-main.pdf";
                       outputFormat = "pdf";
                       pdfEngine = "xelatex";
                       date = 1684869979; # date +%s
-                      pandocArgs = ["--template=support/acm-template.tex"];
+                      pandocArgs = ["--template=acm-template.tex"];
+                      citeproc = false;
                       texlivePackages = nix-documents-lib.pandocTexlivePackages // {
                         inherit (pkgs.texlive)
                           acmart
@@ -57,6 +61,7 @@
                           comment
                           supertabular
                           draftwatermark
+                          biblatex-trad
                         ;
                       };
                     })
