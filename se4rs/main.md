@@ -1,7 +1,6 @@
 ---
 verbosity: INFO
 fail-if-warnings: yes
-dpi: 300
 table-of-contents: no
 strip-comments: yes
 citeproc: yes
@@ -10,20 +9,95 @@ bibliography: main.bib
 link-citations: yes # in-text citation -> biblio entry
 link-bibliography: yes # URLs in biblio
 notes-after-punctuation: yes
-title: Develop and use execution-description for software experiments
-author:
-- Samuel Grayson
-- Darko Marinov
-- Reed Milewicz
-- Daniel S. Katz
+title: Write provenance for software experiments
+#shortitle:
+#subtitle:
 date: 2023-05-22
+author:
+  - name: Samuel Grayson
+    orcid: 0000-0001-5411-356X
+    email: grayson5@illinois.edu
+    affiliation:
+      institution: University of Illinois Urbana-Champaign
+      department: Department of Computer Science
+      streetaddress:  201 North Goodwin Avenue MC 258
+      city: Urbana
+      state: IL
+      country: USA
+      postcode: 61801-2302
+  - name: Daniel S. Katz
+    orcid: 0000-0001-5934-7525
+    email: dskatz@illinois.edu
+    affiliation:
+      institution: University of Illinois Urbana-Champaign Department of Computer Science
+      department:
+        - Department of Computer Science
+        - National Center for Supercomputing Applications
+        - Deparment of Electrical and Computer Engineering
+        - School of Information Sciences
+      streetaddress:  201 North Goodwin Avenue MC 258
+      city: Urbana
+      state: IL
+      country: USA
+      postcode: 61801-2302
+  - name: Reed Milewicz
+    orcid: 0000-0002-1701-0008
+    email: rmilewi@sandia.gov
+    affiliation:
+      department: Software Engineering and Research Department
+      institution: Sandia National Laboratories
+      city: Albuquerque
+      state: NM
+      country: USA
+      postcode: 87123
+      streetaddress: 1515 Eubank Blvd SE1515 Eubank Blvd SE
+  - name: Darko Marinov
+    orcid: 0000-0001-5023-3492
+    email: marinov@illinois.edu
+    affiliation:
+      institution: University of Illinois Urbana-Champaign
+      department: Department of Computer Science
+      streetaddress:  201 North Goodwin Avenue MC 258
+      city: Urbana
+      state: IL
+      country: USA
+      postcode: 61801-2302
+classoption:
+  - manuscript
+  - authordraft
+papersize: letter
+pagestyle: plain
 lang: en-US
 standalone: yes # setting to yes calls \maketitle
 number-sections: yes
-documentclass: article
-indent: yes
-pagestyle: plain
-papersize: letter
+indent: no
+#keywords:
+#  - pass
+publisher:
+  # received_date: 20 February 2007
+  # revised_date: 12 March 2009
+  # accepted_date: 5 June 2009
+  # doi: XXXXXXX.XXXXXXX
+  # isbn:978-1-4503-XXXX-X/18/06
+  # submission_id: 123-A56-BU3
+  # volume: 10
+  # issueNumber: 10
+  # articleNumber: 10
+  year: 2023
+  # articleSequenceNumber: 10
+  # acmBadge:
+  #   - link: http://ctuning.org/ae/ppopp2016.html
+  #     pdfImage: ae-logo
+  # startPage: 10
+  conference:
+    acronym: SE4RS'23
+    name: Software Engineering for Research Software
+    daterange: July 23--27, 2023
+    location: Portland, OR, USA
+  copyright: none
+  #ccsxml: |
+  #  idk
+#acks:
 ---
 
 # Glossary
@@ -105,7 +179,7 @@ Even if they can be built, the `CMD` might require input data or additional argu
 This is not the final proposal for the complete vocabulary; the peer-review process is not well-suited to iterate on the technical details of the execution description.
 The point of this document is to argue that the community should spend effort developing this vocabulary.
 
-## Semantic web description...
+## Semantic web description
 
 This language could be implemented as an vocabulary for linked data in the semantic web.
 Linked data is preferrable for these reasons:
@@ -118,26 +192,29 @@ Linked data is preferrable for these reasons:
 Linked data can be represented in XML format, which is used for other long-term preservation standards. <!-- TODO: e.g. -->
 The template of RDF/XML looks like this:
 
+\tiny
 ```xml
 <?xml version="1.0"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:cito="http://purl.org/spar/cito"
-		 xmlns:doco="http://purl.org/spar/doco/2015-07-03"
+         xmlns:doco="http://purl.org/spar/doco/2015-07-03"
          xmlns:prov="https://www.w3.org/TR/2013/PR-prov-o-20130312/"
-		 xmlns:wfdesc="http://purl.org/wf4ever/wfdesc#"
+         xmlns:wfdesc="http://purl.org/wf4ever/wfdesc#"
          xmlns="http://example.org/execution-description/1.0" >
 ...
 </rdf:RDF>
 ```
+\normalsize
 
 According to the RDF/XML specification, This imports several other vocabularies behind a namespace.
 E.g., `rdf:type` refers to `type` in the `rdf` namespace, which points to `http://www.w3.org/1999/02/22-rdf-syntax-ns#`.
 XML tags with no namespace are resolved within the default namespace, which is our proposed execution-descriptoin vocabulary.
 
-## ... of a list of commands ...
+## Language description
 
 At a very basic level, one could have commands and the purpose that they serve:
 
+\tiny
 ```xml
 
 <process>
@@ -149,12 +226,12 @@ At a very basic level, one could have commands and the purpose that they serve:
   <purpose>plots figures</purpose>
 </process>
 ```
-
-## ... annotated with the purpose they serve ...
+\normalsize
 
 While we could define conventions around what to name the content of the "purpose" tag, it would be more powerful if the language could link directly to the claims in the publication.
 The CiTO vocabulary <!-- TODO: cite --> already defines a vocabulary for describing citations.
 
+\tiny
 ```xml
 <process>
   <command>./execute --input data.csv</command>
@@ -164,6 +241,7 @@ The CiTO vocabulary <!-- TODO: cite --> already defines a vocabulary for describ
   </purpose>
 </process>
 ```
+\normalsize
 
 If the publisher hosts an RDF description at the URL "https://doi.org/10.1234/123456789" when the HTTP request content-type header is `application/rdf+xml`, then this creates a web of linked data.
 The publisher may have the title, authors, date published, and other metadata using Dublin Core metadata terms, for example.
@@ -173,9 +251,9 @@ One could even reference a Nanopublication, which is a semantic web description 
 
 The purpose description can be even more granular, using the DoCO vocabulary <!-- TODO: cite -->, which describes documents.
 
+\tiny
 ```
 <purpose>
-  <!-- links to a figure within a publication -->
   <prov:generated>
     <doco:figure>
       <dc:title>Figure 2b</dc:title>
@@ -184,6 +262,7 @@ The purpose description can be even more granular, using the DoCO vocabulary <!-
   </prov:generated>
 </purpose>
 ```
+\normalsize
 
 With this complete, anyone should be able to execute the experiments which generate figures or claims in the paper if they are labeled by the author in this language.
 
@@ -191,6 +270,7 @@ With this complete, anyone should be able to execute the experiments which gener
 If one command generates data used by other commands, we can use an existing XML workflow vocabularies, such as wfdesc, to define a computational DAG.
 This is more rich than an English string describing the purpose.
 
+\tiny
 ```xml
 <process>
   <wfdesc:hasOutput>
@@ -212,15 +292,17 @@ This is more rich than an English string describing the purpose.
   <wfdesc:hasSink rdf:nodeID="xy-dataset-in">
 </wfdesc:DataLink>
 ```
+\normalsize
 
 Now, a machine can deduce that xy-dataset is an intermediate result used in figure 4, it knows how to generate the intermediate, and it knows how to generate the resulting figure.
 If there are multiple processes which consume xy-dataset, one need not execute xy-dataset multiple times.
 -->
 
-## ... in a specified software environment ...
+## Language feature: specified software environment
 
 One can view specifying the software environment as just prerequisite steps in the computational DAG.
 
+\tiny
 ```xml
 <process>
   <wfdesc:hasOutput>
@@ -240,16 +322,17 @@ One can view specifying the software environment as just prerequisite steps in t
   <wfdesc:hasSink rdf:nodeID="xy-dataset-in" />
 </wfdesc:DataLink>
 ```
+\normalsize
 
 Now a machine knows that the `conda env create ...` must be run before, and the script should be run within the resulting conda environment.
 
 The purpose of an execution language is not to usurp the build-system or workflow engine, which both already handle task DAGs; there must be some minimal support for DAGs just for the cases where the DAG of tasks is not already encoded in a build-system or workflow engine.
 
-## ... with explicit parameters ...
+## Language feature: explicit parameters
 
 In addition to specifying the computational environment and command to run, this language is an ideal candidate to also describe the parameters of the experiment, like:
 
-
+\tiny
 ```xml
 <process>
   <command>./generate ${max_resolution} ${rounds}</command>
@@ -263,13 +346,14 @@ In addition to specifying the computational environment and command to run, this
   <wfdesc:Input rdf:nodeID="rounds" description="number of repetitions of Guassian blur" type="independent variable" />
 </wfdesc:Parameter>
 ```
+\normalsize
 
 One could specify range of valid values or list options.
 
 With this complete, one can even do automated parameter-space search studies, multi-fidelity uncertainty quantification, automated outcome-preserving input minimization, and other automatic experiments.
 
 
-## ... with retrospective provenance
+## Language feature: with retrospective provenance
 
 Retrospective provenance seeks to encode how we got to a specific result.
 If one expects bit-by-bit reproducibility, the authors can put a hash of the intermediate results into the provenance description; if they only expect approximate reproducibility, they can put summary statistics of intermediate results into the provenance description.

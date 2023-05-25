@@ -1,0 +1,202 @@
+\documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$babel-lang$,$endif$$if(papersize)$$papersize$paper,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{acmart}
+
+$if(publisher.rights)$
+\setcopyrighxot{$publisher.rights.copyright$}
+\copyrightyear{$publisher.rights.copyright_year$}
+\acmYear{$publisher.rights.copyright_year$}
+$if(rights.price)$\acmPrice{$rights.price$}$endif$
+$endif$
+
+$if(publisher.isbn)$\acmISBN{$publisher.isbn$}$endif$
+$if(publisher.submission_id)$\acmSubmissionID{$publisher.submission_id$}$endif$
+$if(publisher.doi)$\acmDOI{$publisher.doi$}$endif$
+$if(publisher.conference)$
+\acmConference[$publisher.conference.acryonym$]{$publisher.conference.name$}{$publisher.conference.daterange$}{$publisher.conference.location$}
+$else$
+\acmBooktitle{$publisher.booktitle$}
+$endif$
+
+$if(listings)$
+\usepackage{listings}
+$endif$
+
+$if(lhs)$
+\lstnewenvironment{code}{\lstset{language=Haskell,basicstyle=\small\ttfamily}}{}
+$endif$
+
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+$if(verbatim-in-note)$
+\usepackage{fancyvrb}
+\VerbatimFootnotes % allows verbatim text in footnotes
+$endif$
+
+$if(tables)$
+\usepackage{longtable,booktabs}
+\usepackage{supertabular}
+\let\longtable\supertabular
+\let\endlongtable\endsupertabular
+\let\endhead\relax
+% Fix footnotes in tables (requires footnote package)
+\IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{long table}}{}
+$endif$
+
+$if(graphics)$
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+$endif$
+
+$if(links-as-notes)$
+% Make links footnotes instead of hotlinks:
+\renewcommand{\href}[2]{#2\footnote{\url{#1}}}
+$endif$
+
+$if(strikeout)$
+\usepackage[normalem]{ulem}
+% avoid problems with \sout in headers with hyperref:
+\pdfstringdefDisableCommands{\renewcommand{\sout}{}}
+$endif$
+
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+$if(subparagraph)$
+$else$
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+$endif$
+
+$if(dir)$
+\ifxetex
+  % load bidi as late as possible as it modifies e.g. graphicx
+  $if(latex-dir-rtl)$
+  \usepackage[RTLdocument]{bidi}
+  $else$
+  \usepackage{bidi}
+  $endif$
+\fi
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \TeXXeTstate=1
+  \newcommand{\RL}[1]{\beginR #1\endR}
+  \newcommand{\LR}[1]{\beginL #1\endL}
+  \newenvironment{RTL}{\beginR}{\endR}
+  \newenvironment{LTR}{\beginL}{\endL}
+\fi
+$endif$
+
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+$if(title)$
+\title{$title$$if(thanks)$\thanks{$thanks$}$endif$}
+$endif$
+$if(subtitle)$
+\providecommand{\subtitle}[1]{}
+\subtitle{$subtitle$}
+$endif$
+
+$if(author)$
+\author{
+    $for(author)$
+        \author{$author.name$}
+        $if(author.note)$\authornote{$other.note$}$endif$
+        \email{$author.email$}
+        \orcid{$author.orcid$}
+        \affiliation{\institution{$author.institution$}
+                     \institution{$author.streetaddress$}}
+    $endfor$
+}
+$endif$
+
+\date{$date$}
+
+$if(hopefully-false)$
+$if(csl-refs)$
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+$endif$
+$endif$
+
+\begin{document}
+$if(title)$
+\maketitle
+$endif$
+
+
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+
+$if(keywords)$
+\keywords{$for(keywords)$ $keywords$ $sep$, $endfor$}
+$endif$
+
+$if(ccsxml)$
+$ccsxml$
+$endif$
+
+$if(publisher.received_date)$\received{$publisher.received_date$}$endif$
+$if(publisher.revised_date)$\received[revised]{$publisher.revised_date$}$endif$
+$if(publisher.accepted_date)$\received[accepted]{$publisher.accepted_date$}$endif$
+
+$for(include-before)$
+$include-before$
+$endfor$
+
+$body$
+
+$if(acks)$
+\begin{acks}
+$acks$
+\end{acks}
+$endif$
+
+$if(bibliography)$
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{$for(bibliography)$ $bibliography$ $sep$, $endfor$}
+$endif$
+
+$for(include-after)$
+$include-after$
+$endfor$
+\end{document}
