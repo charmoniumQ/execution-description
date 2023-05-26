@@ -205,47 +205,27 @@ Sciences}%
 
 A computational experiment is reproducible if another team using the
 same experimental infrastructure can make a measurement that concurs
-with the original. In practice, reproducers will still need to look at
-the code by hand to see how to build necessary libraries, configure
-parameters, find data, and invoke the experiment; it is not
-\emph{automatic}. To enable automatic reproducibility, one would need a
-description language which could list the relevant commands with
-machine-readable metadata attached to describe what the command does. It
-is not enough for the language to merely contain this command in a heap
-of other commands; e.g., a Makefile which defines a rule for executing
-the experiment alongside rules for compiling intermediate pieces is not
-sufficient, because there is no machine-readable way to know which of
-the Make rules executes the experiment.
+with the original. Investing in reproducibility can improve
+trustworthiness of scientific results, unlock productivity, and enable
+reusability and community support\cite{ivie2018reproducibility}. In
+practice, reproducers often need to manually work with the code to see
+how to build necessary libraries, configure parameters, find data, and
+invoke the experiment; it is not \emph{automatic}.
 
-Automatically identifying the ``main'' command which executes the
-experiment is critical for:
-
-\begin{itemize}
-\item
-  \textbf{Artifact evaluators}: With manual reproducibility, artifact
-  evaluators spend time learning how to set up, configure, build, and
-  review the artifact. Automatic reproducibility would be the canonical
-  place for experiment computational scientists to concisely communicate
-  these steps. Unlike \texttt{README.txt} it would be human- and
-  machine-readable.
-\item
-  \textbf{Users seeking to re-execute with different parameters}: With
-  manual reproducibility, users have to dig through the experiment's
-  documentation or, more likely, source code to discover how to supply
-  parameters. Automatic reproducibility can also specify how to set
-  these parameters.
-\item
-  \textbf{Large-scale re-execution experiments}: Collberg and Proebsting
-  \cite{collberg_repeatability_2016} do a large-scale study of
-  repeatability of computational experiments in computer science with
-  manual effort. While their results are seminal, it is difficult to
-  repeat in other domains or extend that experiment without spending a
-  huge amount of human-hours figuring out how to run experiments. If
-  Collberg and Proebsting or some other software-engineering researchers
-  \emph{do} embark to figure out how to run a certain experiment, there
-  is standardized way for them to share their steps with other
-  researchers.
-\end{itemize}
+In this work, we consider the use of specification languages that would
+provide machine-readable metadata on how to interact with a piece of
+software. It is not enough for the language to merely contain a run
+command in a heap of other commands; e.g., a Makefile which defines a
+rule for executing the experiment alongside rules for compiling
+intermediate pieces is not sufficient, because there is no
+machine-readable way to know which of the Make rules executes the
+experiment. Being able to automatically identifying the ``main'' command
+which executes the experiment, for instance, would be very useful for
+those seeking to reproduce results from past experiments or reusing
+experiments to address new use cases. Moreover, from a research
+perspective, having a standardized way to run many different codes at
+scale would open new avenues for data mining research on reproducibility
+(c.f., \cite{collberg_repeatability_2016}).
 
 \hypertarget{how-to-get-automatic-reproducibility}{%
 \section{How to get automatic
@@ -279,32 +259,7 @@ the semantic web. Linked data is preferrable for these reasons:
 \end{enumerate}
 
 Linked data is already used for other long-term preservation standards,
-such as RO-crate. The template of RDF/XML looks like this:
-
-\small
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{\textless{}?xml}\OtherTok{ version=}\StringTok{"1.0"}\FunctionTok{?\textgreater{}}
-\NormalTok{\textless{}}\KeywordTok{rdf:RDF}\OtherTok{ xmlns:rdf=}\StringTok{"http://www.w3.org/1999/02/22{-}rdf{-}syntax{-}ns\#"}
-\OtherTok{         xmlns:cito=}\StringTok{"http://purl.org/spar/cito"}
-\OtherTok{         xmlns:doco=}\StringTok{"http://purl.org/spar/doco/2015{-}07{-}03"}
-\OtherTok{         xmlns:prov=}\StringTok{"https://www.w3.org/TR/2013/PR{-}prov{-}o{-}20130312/"}
-\OtherTok{         xmlns:wfdesc=}\StringTok{"http://purl.org/wf4ever/wfdesc\#"}
-\OtherTok{         xmlns=}\StringTok{"http://example.org/execution{-}description/1.0"}\NormalTok{ \textgreater{}}
-\NormalTok{...}
-\NormalTok{\textless{}/}\KeywordTok{rdf:RDF}\NormalTok{\textgreater{}}
-\end{Highlighting}
-\end{Shaded}
-
-\normalsize
-
-According to the RDF/XML specification, This imports several other
-vocabularies behind a namespace. E.g., \texttt{rdf:type} refers to
-\texttt{type} in the \texttt{rdf} namespace, which points to
-\texttt{http://www.w3.org/1999/02/22-rdf-syntax-ns\#}. XML tags with no
-namespace are resolved within the default namespace, which is our
-proposed execution-description vocabulary.
+such as RO-crate and Bio.
 
 \hypertarget{language-description}{%
 \subsection{Language description}\label{language-description}}
@@ -317,61 +272,51 @@ serve:
 \begin{Shaded}
 \begin{Highlighting}[]
 
-\NormalTok{\textless{}}\KeywordTok{process}\NormalTok{\textgreater{}}
-\NormalTok{  \textless{}}\KeywordTok{command}\NormalTok{\textgreater{}./execute {-}{-}input data.csv\textless{}/}\KeywordTok{command}\NormalTok{\textgreater{}}
-\NormalTok{  \textless{}}\KeywordTok{purpose}\NormalTok{\textgreater{}generates data\textless{}/}\KeywordTok{purpose}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}}\KeywordTok{process}\OtherTok{ rdf:ID=}\StringTok{"make"}\NormalTok{\textgreater{}}
+\NormalTok{  \textless{}}\KeywordTok{command}\NormalTok{\textgreater{}make libs\textless{}/}\KeywordTok{command}\NormalTok{\textgreater{}}
+\NormalTok{  \textless{}}\KeywordTok{purpose}\NormalTok{\textgreater{}compiles libraries\textless{}/}\KeywordTok{purpose}\NormalTok{\textgreater{}}
 \NormalTok{\textless{}/}\KeywordTok{process}\NormalTok{\textgreater{}}
-\NormalTok{\textless{}}\KeywordTok{process}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}}\KeywordTok{process}\OtherTok{ rdf:ID=}\StringTok{"figures"}\NormalTok{\textgreater{}}
 \NormalTok{  \textless{}}\KeywordTok{command}\NormalTok{\textgreater{}python3 main.py\textless{}/}\KeywordTok{command}\NormalTok{\textgreater{}}
-\NormalTok{  \textless{}}\KeywordTok{purpose}\NormalTok{\textgreater{}plots figures\textless{}/}\KeywordTok{purpose}\NormalTok{\textgreater{}}
+\NormalTok{  \textless{}}\KeywordTok{purpose}\NormalTok{\textgreater{}generates figures\textless{}/}\KeywordTok{purpose}\NormalTok{\textgreater{}}
+\NormalTok{  \textless{}}\KeywordTok{depends\_on}\OtherTok{ target=}\StringTok{"\#make"}\NormalTok{ /\textgreater{}}
 \NormalTok{\textless{}/}\KeywordTok{process}\NormalTok{\textgreater{}}
 \end{Highlighting}
 \end{Shaded}
 
 \normalsize
+
+The process labeled \texttt{figures} references the process labeled make
+as a prerequisite using the XML RDF reference syntax. The example
+depects a simple \texttt{depends\_on} predicate, but one might use the
+albeit more complex wfdesc vocabulary to describe these dependencies.
+One can view specifying the software environment as just prerequisite
+steps in the computational DAG{[}\^{}define-dag{]}. The purpose of an
+execution language is not to usurp the build-system or workflow engine,
+which both already handle task DAGs; there must be some minimal support
+for DAGs just for the cases where the DAG of tasks is not already
+encoded in a build-system or workflow engine.
+
+{[}define-dag{]}: A computaitonal directed acyclic graph (DAG) is a set
+of programs and pairs of programs (called links), where each link
+indicates the output of one program is the input to the other program.
+This is the basic concept of GNU Make, workflows, and build systems.
 
 While we could define conventions around what to name the content of the
 ``purpose'' tag, it would be more powerful if the language could link
-directly to the claims in the publication. The CiTO vocabulary
-\cite{shotton_cito_2010} already defines a vocabulary for describing
-citations.
-
-\small
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{\textless{}}\KeywordTok{process}\NormalTok{\textgreater{}}
-\NormalTok{  \textless{}}\KeywordTok{command}\NormalTok{\textgreater{}./execute {-}{-}input data.csv\textless{}/}\KeywordTok{command}\NormalTok{\textgreater{}}
-\NormalTok{  \textless{}}\KeywordTok{purpose}\NormalTok{\textgreater{}}
-    \CommentTok{\textless{}!{-}{-} links to an entire publication {-}{-}\textgreater{}}
-\NormalTok{    \textless{}}\KeywordTok{cito:isCitedAsEvidenceBy}\OtherTok{ rdf:resource=}\StringTok{"https://doi.org/10.1234/123456789"}\NormalTok{ /\textgreater{}}
-\NormalTok{  \textless{}/}\KeywordTok{purpose}\NormalTok{\textgreater{}}
-\NormalTok{\textless{}/}\KeywordTok{process}\NormalTok{\textgreater{}}
-\end{Highlighting}
-\end{Shaded}
-
-\normalsize
-
-If the publisher hosts an RDF description at the URL
-``https://doi.org/10.1234/123456789'' when the HTTP request content-type
-header is \texttt{application/rdf+xml}, then this creates a web of
-linked data. The publisher may have the title, authors, date published,
-and other metadata using Dublin Core metadata terms, for example. This
-is the dream of linked data: machine-readable data by different authors
-hosted in different locations linking together seamlessly. Even if the
-publisher does not have an RDF+XML description, third parties can make
-claims about ``https://doi.org/10.1234/123456789'', although those
-claims would not be as easily discoverable. One could even reference a
-Nanopublication, which is a semantic web description of the scientific
-claim.
-
-The purpose description can be even more granular, using the DoCO
-vocabulary \cite{constantin_document_2016}, which describes documents.
+directly to the claims in the publication. Purpose blocks might look
+more like this:
 
 \small
 
 \begin{verbatim}
-<purpose>
+<purpose rdf:ID="pub">
+  <!-- Links to an entire publication -->
+  <cito:isCitedAsEvidenceBy rdf:resource="https://doi.org/10.1234/123456789" />
+</purpose>
+...
+<purpose rdf:ID="fig-pub">
+  <!-- Links to a specific figure within a publication -->
   <prov:generated>
     <doco:figure>
       <dc:title>Figure 2b</dc:title>
@@ -379,51 +324,46 @@ vocabulary \cite{constantin_document_2016}, which describes documents.
     </doco:figure>
   </prov:generated>
 </purpose>
+...
+<purpose rdf:ID="claim">
+  <!-- Describes a specific assertion -->
+  <cito:supports>
+    <claim>
+      <subject rdf:resource="malaria" />
+      <predicate rdf:resource="isTransmittedBy" />
+      <object rdf:resource="isTransmittedBy" />
+    </claim>
+  </cito:supports>
+</purpose>
 \end{verbatim}
 
 \normalsize
 
+The block labeled \texttt{pub} uses the CiTO vocabulary
+\cite{shotton_cito_2010} to explain that the result of that process is
+used as evidence in a specific publication. If the publisher hosts an
+RDF description at the URL ``https://doi.org/10.1234/123456789'' when
+the HTTP request content-type header is \texttt{application/rdf+xml},
+then this creates a web of linked data. The publisher may have the
+title, authors, date published, and other metadata using Dublin Core
+metadata terms, for example. This is the dream of linked data:
+machine-readable data by different authors hosted in different locations
+linking together seamlessly. Even if the publisher does not have an
+RDF+XML description, third parties can make claims about
+``https://doi.org/10.1234/123456789'', although those claims would not
+be as easily discoverable. The purpose description can be even more
+granular, using the DoCO vocabulary \cite{constantin_document_2016},
+which describes documents, as shown in the block labeled
+\texttt{fig-pub}.
+
+One could even reference a Nanopublication, which is a semantic web
+description of the scientific claim. The block labeled \texttt{claim}
+actually embeds the claim that it supports using the nanopublication
+vocabulary.
+
 With this complete, anyone should be able to execute the experiments
 which generate figures or claims in the paper if they are labeled by the
 computational scientist in this language.
-
-One can view specifying the software environment as just prerequisite
-steps in the computational DAG.
-
-\small
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{\textless{}}\KeywordTok{process}\NormalTok{\textgreater{}}
-\NormalTok{  \textless{}}\KeywordTok{wfdesc:hasOutput}\NormalTok{\textgreater{}}
-\NormalTok{    \textless{}}\KeywordTok{wfdesc:Output}\OtherTok{ rdf:nodeID=}\StringTok{"conda{-}env{-}out"}\NormalTok{ /\textgreater{}}
-\NormalTok{  \textless{}/}\KeywordTok{wfdesc:hasOutput}\NormalTok{\textgreater{}}
-\NormalTok{  \textless{}}\KeywordTok{command}\NormalTok{\textgreater{}conda env create {-}{-}name experiment{-}123 {-}{-}file environment.yml\textless{}/}\KeywordTok{command}\NormalTok{\textgreater{}}
-\NormalTok{\textless{}/}\KeywordTok{process}\NormalTok{\textgreater{}}
-\NormalTok{\textless{}}\KeywordTok{process}\NormalTok{\textgreater{}}
-\NormalTok{  \textless{}}\KeywordTok{wfdesc:hasInput}\NormalTok{\textgreater{}}
-\NormalTok{    \textless{}}\KeywordTok{wfdesc:Input}\OtherTok{ rdf:nodeID=}\StringTok{"conda{-}env{-}in"}\NormalTok{ /\textgreater{}}
-\NormalTok{  \textless{}/}\KeywordTok{wfdesc:hasOutput}\NormalTok{\textgreater{}}
-\NormalTok{  \textless{}}\KeywordTok{purpose}\NormalTok{\textgreater{}figure 4\textless{}/}\KeywordTok{purpose}\NormalTok{\textgreater{}}
-\NormalTok{  \textless{}}\KeywordTok{command}\NormalTok{\textgreater{}conda run {-}{-}name experiment{-}123 ./plot{-}figure.py\textless{}/}\KeywordTok{command}\NormalTok{\textgreater{}}
-\NormalTok{\textless{}/}\KeywordTok{process}\NormalTok{\textgreater{}}
-\NormalTok{\textless{}}\KeywordTok{wfdesc:DataLink}\NormalTok{\textgreater{}}
-\NormalTok{  \textless{}}\KeywordTok{wfdesc:hasSource}\OtherTok{ rdf:nodeID=}\StringTok{"xy{-}dataset{-}out"}\NormalTok{ /\textgreater{}}
-\NormalTok{  \textless{}}\KeywordTok{wfdesc:hasSink}\OtherTok{ rdf:nodeID=}\StringTok{"xy{-}dataset{-}in"}\NormalTok{ /\textgreater{}}
-\NormalTok{\textless{}/}\KeywordTok{wfdesc:DataLink}\NormalTok{\textgreater{}}
-\end{Highlighting}
-\end{Shaded}
-
-\normalsize
-
-Now a machine knows that the \texttt{conda\ env\ create\ ...} must be
-run before, and the script should be run within the resulting conda
-environment.
-
-The purpose of an execution language is not to usurp the build-system or
-workflow engine, which both already handle task DAGs; there must be some
-minimal support for DAGs just for the cases where the DAG of tasks is
-not already encoded in a build-system or workflow engine.
 
 In addition to specifying the computational environment and command to
 run, this language is an ideal candidate to also describe the parameters

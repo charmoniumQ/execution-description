@@ -209,7 +209,9 @@ $if(acks)$\begin{acks}$acks$\end{acks}$endif$
 %$endif$
 
 \bibliographystyle{plain}
+$for(bibliography)$
 \bibliography{$bibliography$}
+$endfor$
 
 $for(include-after)$
 $include-after$

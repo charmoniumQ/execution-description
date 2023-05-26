@@ -127,24 +127,14 @@ Terms:
 # Introduction
 
 A computational experiment is reproducible if another team using the same experimental infrastructure can make a measurement that concurs with the original.
-In practice, reproducers will still need to look at the code by hand to see how to build necessary libraries, configure parameters, find data, and invoke the experiment; it is not _automatic_.
-To enable automatic reproducibility, one would need a description language which could list the relevant commands with machine-readable metadata attached to describe what the command does.
-It is not enough for the language to merely contain this command in a heap of other commands; e.g., a Makefile which defines a rule for executing the experiment alongside rules for compiling intermediate pieces is not sufficient, because there is no machine-readable way to know which of the Make rules executes the experiment.
+Investing in reproducibility can improve trustworthiness of scientific results, unlock productivity, and enable reusability and community support\cite{ivie2018reproducibility}.
+In practice, reproducers often need to manually work with the code to see how to build necessary libraries, configure parameters, find data, and invoke the experiment; it is not _automatic_.
 
-Automatically identifying the "main" command which executes the experiment is critical for:
-
-* **Artifact evaluators**:
-  With manual reproducibility, artifact evaluators spend time learning how to set up, configure, build, and review the artifact.
-  Automatic reproducibility would be the canonical place for experiment computational scientists to concisely communicate these steps. Unlike `README.txt` it would be human- and machine-readable.
-
-* **Users seeking to re-execute with different parameters**:
-  With manual reproducibility, users have to dig through the experiment's documentation or, more likely, source code to discover how to supply parameters.
-  Automatic reproducibility can also specify how to set these parameters.
-
-* **Large-scale re-execution experiments**:
-  Collberg and Proebsting \cite{collberg_repeatability_2016} do a large-scale study of repeatability of computational experiments in computer science with manual effort.
-  While their results are seminal, it is difficult to repeat in other domains or extend that experiment without spending a huge amount of human-hours figuring out how to run experiments.
-  If Collberg and Proebsting or some other software-engineering researchers _do_ embark to figure out how to run a certain experiment, there is standardized way for them to share their steps with other researchers.
+In this work, we consider the use of specification languages that would provide machine-readable metadata on how to interact with a piece of software.
+It is not enough for the language to merely contain a run command in a heap of other commands;
+e.g., a Makefile which defines a rule for executing the experiment alongside rules for compiling intermediate pieces is not sufficient, because there is no machine-readable way to know which of the Make rules executes the experiment.
+Being able to automatically identifying the "main" command which executes the experiment, for instance, would be very useful for those seeking to reproduce results from past experiments or reusing experiments to address new use cases.
+Moreover, from a research perspective, having a standardized way to run many different codes at scale would open new avenues for data mining research on reproducibility (c.f., \cite{collberg_repeatability_2016}).
 
 <!--
 # Existing standards for execution descriptions of computational experiments
@@ -203,7 +193,9 @@ Linked data is preferrable for these reasons:
 3. There is already a rich set of ontologies for describing digital and physical resources (RO-crate, wf4prov, software project description, scientific hypotheses, CiTO) in linked data.
 4. There is already a rich ecosystem for authoring ontologies and validating documents within those ontologies.
 
-Linked data is already used for other long-term preservation standards, such as RO-crate.
+Linked data is already used for other long-term preservation standards, such as RO-crate and Bio.
+
+<!--
 The template of RDF/XML looks like this:
 
 \small
@@ -223,6 +215,7 @@ The template of RDF/XML looks like this:
 According to the RDF/XML specification, This imports several other vocabularies behind a namespace.
 E.g., `rdf:type` refers to `type` in the `rdf` namespace, which points to `http://www.w3.org/1999/02/22-rdf-syntax-ns#`.
 XML tags with no namespace are resolved within the default namespace, which is our proposed execution-description vocabulary.
+-->
 
 ## Language description
 
@@ -231,45 +224,39 @@ At a very basic level, one could have commands and the purpose that they serve:
 \small
 ```xml
 
-<process>
-  <command>./execute --input data.csv</command>
-  <purpose>generates data</purpose>
+<process rdf:ID="make">
+  <command>make libs</command>
+  <purpose>compiles libraries</purpose>
 </process>
-<process>
+<process rdf:ID="figures">
   <command>python3 main.py</command>
-  <purpose>plots figures</purpose>
+  <purpose>generates figures</purpose>
+  <depends_on target="#make" />
 </process>
 ```
 \normalsize
+
+The process labeled `figures` references the process labeled make as a prerequisite using the XML RDF reference syntax.  <!-- TODO: cite RDF XML -->
+The example depects a simple `depends_on` predicate, but one might use the albeit more complex wfdesc vocabulary to describe these dependencies.
+One can view specifying the software environment as just prerequisite steps in the computational DAG[^define-dag].
+The purpose of an execution language is not to usurp the build-system or workflow engine, which both already handle task DAGs; there must be some minimal support for DAGs just for the cases where the DAG of tasks is not already encoded in a build-system or workflow engine.
+
+[define-dag]:
+A computaitonal directed acyclic graph (DAG) is a set of programs and pairs of programs (called links), where each link indicates the output of one program is the input to the other program.
+This is the basic concept of GNU Make, workflows, and build systems.
 
 While we could define conventions around what to name the content of the "purpose" tag, it would be more powerful if the language could link directly to the claims in the publication.
-The CiTO vocabulary \cite{shotton_cito_2010} already defines a vocabulary for describing citations.
-
-\small
-```xml
-<process>
-  <command>./execute --input data.csv</command>
-  <purpose>
-    <!-- links to an entire publication -->
-    <cito:isCitedAsEvidenceBy rdf:resource="https://doi.org/10.1234/123456789" />
-  </purpose>
-</process>
-```
-\normalsize
-
-If the publisher hosts an RDF description at the URL "https://doi.org/10.1234/123456789" when the HTTP request content-type header is `application/rdf+xml`, then this creates a web of linked data.
-The publisher may have the title, authors, date published, and other metadata using Dublin Core metadata terms, for example.
-<!-- cite Dublin core metadata terms -->
-This is the dream of linked data: machine-readable data by different authors hosted in different locations linking together seamlessly.
-Even if the publisher does not have an RDF+XML description, third parties can make claims about "https://doi.org/10.1234/123456789", although those claims would not be as easily discoverable.
-One could even reference a Nanopublication, which is a semantic web description of the scientific claim.
-<!-- cite something for Nanopublication, too -->
-
-The purpose description can be even more granular, using the DoCO vocabulary \cite{constantin_document_2016}, which describes documents.
+Purpose blocks might look more like this:
 
 \small
 ```
-<purpose>
+<purpose rdf:ID="pub">
+  <!-- Links to an entire publication -->
+  <cito:isCitedAsEvidenceBy rdf:resource="https://doi.org/10.1234/123456789" />
+</purpose>
+...
+<purpose rdf:ID="fig-pub">
+  <!-- Links to a specific figure within a publication -->
   <prov:generated>
     <doco:figure>
       <dc:title>Figure 2b</dc:title>
@@ -277,70 +264,32 @@ The purpose description can be even more granular, using the DoCO vocabulary \ci
     </doco:figure>
   </prov:generated>
 </purpose>
+...
+<purpose rdf:ID="claim">
+  <!-- Describes a specific assertion -->
+  <cito:supports>
+    <claim>
+      <subject rdf:resource="malaria" />
+      <predicate rdf:resource="isTransmittedBy" />
+      <object rdf:resource="isTransmittedBy" />
+    </claim>
+  </cito:supports>
+</purpose>
 ```
 \normalsize
+
+The block labeled `pub` uses the CiTO vocabulary \cite{shotton_cito_2010} to explain that the result of that process is used as evidence in a specific publication.
+If the publisher hosts an RDF description at the URL "https://doi.org/10.1234/123456789" when the HTTP request content-type header is `application/rdf+xml`, then this creates a web of linked data.
+The publisher may have the title, authors, date published, and other metadata using Dublin Core metadata terms, for example.
+<!-- cite Dublin core metadata terms -->
+This is the dream of linked data: machine-readable data by different authors hosted in different locations linking together seamlessly.
+Even if the publisher does not have an RDF+XML description, third parties can make claims about "https://doi.org/10.1234/123456789", although those claims would not be as easily discoverable.
+The purpose description can be even more granular, using the DoCO vocabulary \cite{constantin_document_2016}, which describes documents, as shown in the block labeled `fig-pub`.
+
+One could even reference a Nanopublication, which is a semantic web description of the scientific claim.
+The block labeled `claim` actually embeds the claim that it supports using the nanopublication vocabulary. <!-- TODO: cite -->
 
 With this complete, anyone should be able to execute the experiments which generate figures or claims in the paper if they are labeled by the computational scientist in this language.
-
-<!--
-If one command generates data used by other commands, we can use an existing XML workflow vocabularies, such as wfdesc, to define a computational DAG.
-This is more rich than an English string describing the purpose.
-
-\small
-```xml
-<process>
-  <wfdesc:hasOutput>
-    <wfdesc:Output rdf:nodeID="xy-dataset-out">
-      <!-- could be nfo:FileDataObject or could be left abstract as it is here --><!--
-    </wfdesc:Output>
-  </wfdesc:hasOutput>
-  <command>./generate.py</command>
-</process>
-<process>
-  <wfdesc:hasInput>
-    <wfdesc:Input rdf:nodeID="xy-dataset-in" />
-  </wfdesc:hasOutput>
-  <purpose>figure 4</purpose>
-  <command>./plot-figure.py</command>
-</process>
-<wfdesc:DataLink>
-  <wfdesc:hasSource rdf:nodeID="xy-dataset-out" />
-  <wfdesc:hasSink rdf:nodeID="xy-dataset-in">
-</wfdesc:DataLink>
-```
-\normalsize
-
-Now, a machine can deduce that xy-dataset is an intermediate result used in figure 4, it knows how to generate the intermediate, and it knows how to generate the resulting figure.
-If there are multiple processes which consume xy-dataset, one need not execute xy-dataset multiple times.
--->
-
-One can view specifying the software environment as just prerequisite steps in the computational DAG.
-
-\small
-```xml
-<process>
-  <wfdesc:hasOutput>
-    <wfdesc:Output rdf:nodeID="conda-env-out" />
-  </wfdesc:hasOutput>
-  <command>conda env create --name experiment-123 --file environment.yml</command>
-</process>
-<process>
-  <wfdesc:hasInput>
-    <wfdesc:Input rdf:nodeID="conda-env-in" />
-  </wfdesc:hasOutput>
-  <purpose>figure 4</purpose>
-  <command>conda run --name experiment-123 ./plot-figure.py</command>
-</process>
-<wfdesc:DataLink>
-  <wfdesc:hasSource rdf:nodeID="xy-dataset-out" />
-  <wfdesc:hasSink rdf:nodeID="xy-dataset-in" />
-</wfdesc:DataLink>
-```
-\normalsize
-
-Now a machine knows that the `conda env create ...` must be run before, and the script should be run within the resulting conda environment.
-
-The purpose of an execution language is not to usurp the build-system or workflow engine, which both already handle task DAGs; there must be some minimal support for DAGs just for the cases where the DAG of tasks is not already encoded in a build-system or workflow engine.
 
 In addition to specifying the computational environment and command to run, this language is an ideal candidate to also describe the parameters of the experiment, like:
 One could specify range of valid values or list options.
