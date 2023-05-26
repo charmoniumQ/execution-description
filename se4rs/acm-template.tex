@@ -1,4 +1,4 @@
-\documentclass[natbib=false,$for(classoption)$$classoption$$sep$,$endfor$]{acmart}
+\documentclass[$for(classoption)$$classoption$$sep$,$endfor$]{acmart}
 \usepackage[utf8]{inputenc}
 % ACM options first in the order they appear in acmguide.pdf
 
@@ -51,13 +51,14 @@ $if(topmatter)$\settopmatter{$topmatter$}$endif$
 $if(publisher.received_date)$\received{$publisher.received_date$}$endif$
 $if(publisher.revised_date)$\received[revised]{$publisher.revised_date$}$endif$
 $if(publisher.accepted_date)$\received[accepted]{$publisher.accepted_date$}$endif$
-\RequirePackage[
-  datamodel=acmdatamodel,
-  style=acmnumeric, % use style=acmauthoryear for publications that require it
-]{biblatex}
-$for(bibliography)$
-\addbibresource{$bibliography$.bib}
-$endfor$
+% \RequirePackage[
+%   datamodel=acmdatamodel,
+%   style=acmnumeric, % use style=acmauthoryear for publications that require it
+% ]{biblatex}
+% $for(bibliography)$
+% \addbibresource{$bibliography$.bib}
+% $endfor$
+
 \usepackage{hyperref}
 
 $if(listings)$
@@ -203,9 +204,12 @@ $body$
 
 $if(acks)$\begin{acks}$acks$\end{acks}$endif$
 
-$if(bibliography)$
-\printbibliography
-$endif$
+%$if(bibliography)$
+%\printbibliography
+%$endif$
+
+\bibliographystyle{plain}
+\bibliography{$bibliography$}
 
 $for(include-after)$
 $include-after$

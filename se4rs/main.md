@@ -1,5 +1,5 @@
 ---
-verbosity: INFO
+verbosity: ERROR
 fail-if-warnings: yes
 table-of-contents: no
 strip-comments: yes
@@ -27,7 +27,7 @@ author:
       country: USA
       postcode: 61801-2302
   - name: Joshua Teves
-    orcid: 
+    orcid: 0000-0002-7767-0067
     email: jbteves@sandia.gov
     affiliation:
       department:
