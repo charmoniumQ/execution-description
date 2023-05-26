@@ -126,25 +126,9 @@ Terms:
 
 # Introduction
 
-A computational experiment is reproducible if another team using the same experimental infrastructure can make a measurement that concurs with the original.
-In practice, reproducers will still need to look at the code by hand to see how to build necessary libraries, configure parameters, find data, and invoke the experiment; it is not _automatic_.
-To enable automatic reproducibility, one would need a description language which could list the relevant commands with machine-readable metadata attached to describe what the command does.
-It is not enough for the language to merely contain this command in a heap of other commands; e.g., a Makefile which defines a rule for executing the experiment alongside rules for compiling intermediate pieces is not sufficient, because there is no machine-readable way to know which of the Make rules executes the experiment.
+A computational experiment is reproducible if another team using the same experimental infrastructure can make a measurement that concurs with the original. Investing in reproducibility can improve trustworthiness of scientific results, unlock productivity, and enable reusability and community support\cite{ivie2018reproducibility}. At the same time, reproducibility is a dynamic quality of the software, one that has to be exercised to prove that the current behavior of the software matches expectations. In practice, reproducers often need to manually work with the code to see how to build necessary libraries, configure parameters, find data, and invoke the experiment; it is not _automatic_. As noted by Lin and Zhang, reproducibility is not a one-off achievement but a ongoing commitment to practices and processes that enable it. We argue that a "defense in depth" approach is needed to safeguard reproducibility, including containers, interactive media such as notebooks and workflows, and policies and standards to promote best practices. 
 
-Automatically identifying the "main" command which executes the experiment is critical for:
-
-* **Artifact evaluators**:
-  With manual reproducibility, artifact evaluators spend time learning how to set up, configure, build, and review the artifact.
-  Automatic reproducibility would be the canonical place for experiment computational scientists to concisely communicate these steps. Unlike `README.txt` it would be human- and machine-readable.
-
-* **Users seeking to re-execute with different parameters**:
-  With manual reproducibility, users have to dig through the experiment's documentation or, more likely, source code to discover how to supply parameters.
-  Automatic reproducibility can also specify how to set these parameters.
-
-* **Large-scale re-execution experiments**:
-  Collberg and Proebsting \cite{collberg_repeatability_2016} do a large-scale study of repeatability of computational experiments in computer science with manual effort.
-  While their results are seminal, it is difficult to repeat in other domains or extend that experiment without spending a huge amount of human-hours figuring out how to run experiments.
-  If Collberg and Proebsting or some other software-engineering researchers _do_ embark to figure out how to run a certain experiment, there is standardized way for them to share their steps with other researchers.
+In this work, we consider the use of specification languages that would provide machine-readable metadata on how to interact with a piece of software. It is not enough for the language to merely contain this command in a heap of other commands; e.g., a Makefile which defines a rule for executing the experiment alongside rules for compiling intermediate pieces is not sufficient, because there is no machine-readable way to know which of the Make rules executes the experiment. Being able to automatically identifying the "main" command which executes the experiment, for instance, would be very useful for those seeking to reproduce results from past experiments or reusing experiments to address new use cases. Moreover, from a research perspective, having a standardized way to run many different codes at scale would open new avenues for data mining research on reproducibility (c.f., \cite{collberg_repeatability_2016}).
 
 <!--
 # Existing standards for execution descriptions of computational experiments
