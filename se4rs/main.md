@@ -178,48 +178,9 @@ While multi-stage containers mitigate this problem, in practice <!-- Cite Henkel
 Even if they can be built, the `CMD` might require input data or additional arguments, and there is no convention or standard of listing an "example invocation" in a machine-readable way.
 -->
 
-# How to get automatic reproducibility
+# Towards Specification Standards for Automated Reproducibility Assessment
 
-This is not the final proposal for the complete vocabulary; the peer-review process is not well-suited to iterate on technical details.
-The point of this article is to argue that the community should spend effort developing this vocabulary.
-
-## Semantic web
-
-This language could be implemented as a vocabulary for linked data in the semantic web.
-Linked data is preferrable for these reasons:
-
-1. Linked data is open to extensions.
-2. It is possible to link to other resources in linked data.
-3. There is already a rich set of ontologies for describing digital and physical resources (RO-crate, wf4prov, software project description, scientific hypotheses, CiTO) in linked data.
-4. There is already a rich ecosystem for authoring ontologies and validating documents within those ontologies.
-
-Linked data is already used for other long-term preservation standards, such as RO-crate and Bio.
-
-<!--
-The template of RDF/XML looks like this:
-
-\small
-```xml
-<?xml version="1.0"?>
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:cito="http://purl.org/spar/cito"
-         xmlns:doco="http://purl.org/spar/doco/2015-07-03"
-         xmlns:prov="https://www.w3.org/TR/2013/PR-prov-o-20130312/"
-         xmlns:wfdesc="http://purl.org/wf4ever/wfdesc#"
-         xmlns="http://example.org/execution-description/1.0" >
-...
-</rdf:RDF>
-```
-\normalsize
-
-According to the RDF/XML specification, This imports several other vocabularies behind a namespace.
-E.g., `rdf:type` refers to `type` in the `rdf` namespace, which points to `http://www.w3.org/1999/02/22-rdf-syntax-ns#`.
-XML tags with no namespace are resolved within the default namespace, which is our proposed execution-description vocabulary.
--->
-
-## Language description
-
-At a very basic level, one could have commands and the purpose that they serve:
+At present, there are a diverse range of solutions for expressing how a code should be run, including bash scripts, environment management specifications (e.g., Spack, Nix, Python Virtualenv), continuous integration scripts, workflows, and container specifications. In our own research on reproducibility of scientific codes, as we scale up our studies to include many different codes, keeping track of how to execute each one becomes very complicated. Moreover, when a code fails to run or deliver reproducible results, it is difficult to assess whether there is a fault with the code or whether we failed to run the code in the correct way. While we do not expect (or recommend) that the scientific software community converge on a single solution for executing codes, we do see value in having a standard way of documenting how each code ought to be run. The point of this article is to argue that the community should spend effort developing the right vocabulary and constructs for such a standard. Such a language could be implemented as a linked-data ontology like the semantic web. This would enable us to build on a rich set of ontologies for describing digital and physical resources (RO-crate, wf4prov, software project description, scientific hypotheses, CiTO), and we could leverage the ecosytem of existing tools for ontology management. At a very basic level, one could have commands and the purpose that they serve:
 
 \small
 ```xml
@@ -396,15 +357,3 @@ The only manual labor is comparing these results to those in the paper.
 Even that comparison can be simplified, if the last step in the execution description outputs a boolean representing "is the hypothesis proven?"; the reviewer just needs to see that all of these output "true".
 
 <!-- Cite Collberg and Proebsting's first and second project -->
-
-
-<!-- 
-TODO
-# How to exploit for software-engineering research
--->
-
-<!--
-Potential collaborators
-Bertram Ludascher
-Sandia 1424, ECMF
--->
