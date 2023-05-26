@@ -20,7 +20,7 @@ author:
     affiliation:
       institution: University of Illinois Urbana-Champaign
       department:
-	    - Department of Computer Science
+        - Department of Computer Science
       streetaddress:  201 North Goodwin Avenue MC 258
       city: Urbana
       state: IL
@@ -31,7 +31,7 @@ author:
     email: jbteves@sandia.gov
     affiliation:
       department:
-	    - Software Engineering and Research Department
+        - Software Engineering and Research Department
       institution: Sandia National Laboratories
       city: Albuquerque
       state: NM
@@ -43,7 +43,7 @@ author:
     email: rmilewi@sandia.gov
     affiliation:
       department:
-	    - Software Engineering and Research Department
+        - Software Engineering and Research Department
       institution: Sandia National Laboratories
       city: Albuquerque
       state: NM
@@ -71,7 +71,7 @@ author:
     affiliation:
       institution: University of Illinois Urbana-Champaign
       department:
-	    - Department of Computer Science
+        - Department of Computer Science
       streetaddress:  201 North Goodwin Avenue MC 258
       city: Urbana
       state: IL
@@ -183,7 +183,7 @@ Even if they can be built, the `CMD` might require input data or additional argu
 This is not the final proposal for the complete vocabulary; the peer-review process is not well-suited to iterate on technical details.
 The point of this article is to argue that the community should spend effort developing this vocabulary.
 
-## Semantic web
+## Linked data
 
 This language could be implemented as a vocabulary for linked data in the semantic web.
 Linked data is preferrable for these reasons:
@@ -193,7 +193,8 @@ Linked data is preferrable for these reasons:
 3. There is already a rich set of ontologies for describing digital and physical resources (RO-crate, wf4prov, software project description, scientific hypotheses, CiTO) in linked data.
 4. There is already a rich ecosystem for authoring ontologies and validating documents within those ontologies.
 
-Linked data is already used for other long-term preservation standards, such as RO-crate and Bio.
+Using linked data to describing scientific workflows has already been suggested by Garijo and Gil in OPMW [@garijo_new_2011], Soiland-Reyes et al. in RO-Crate [@soiland-reyes_packaging_2022], and Gray et al. in Bioschemas [@gray_bioschemas_2017], which indicates confidence in its flexibility and long-term support.
+It is a natural extension to use linked data to specify metadata about the experiment in this language.
 
 <!--
 The template of RDF/XML looks like this:
@@ -223,7 +224,6 @@ At a very basic level, one could have commands and the purpose that they serve:
 
 \small
 ```xml
-
 <process rdf:ID="make">
   <command>make libs</command>
   <purpose>compiles libraries</purpose>
@@ -236,8 +236,8 @@ At a very basic level, one could have commands and the purpose that they serve:
 ```
 \normalsize
 
-The process labeled `figures` references the process labeled make as a prerequisite using the XML RDF reference syntax.  <!-- TODO: cite RDF XML -->
-The example depects a simple `depends_on` predicate, but one might use the albeit more complex wfdesc vocabulary to describe these dependencies.
+The process labeled `figures` references the process labeled make as a prerequisite using the XML RDF reference syntax [@gandon_rdf_2014].
+The example depects a simple `depends_on` predicate, but one might use the albeit more complex wfdesc vocabulary [@soiland-reyes_wf4ever_2013] to describe these dependencies.
 One can view specifying the software environment as just prerequisite steps in the computational DAG[^define-dag].
 The purpose of an execution language is not to usurp the build-system or workflow engine, which both already handle task DAGs; there must be some minimal support for DAGs just for the cases where the DAG of tasks is not already encoded in a build-system or workflow engine.
 
@@ -249,7 +249,7 @@ While we could define conventions around what to name the content of the "purpos
 Purpose blocks might look more like this:
 
 \small
-```
+```xml
 <purpose rdf:ID="pub">
   <!-- Links to an entire publication -->
   <cito:isCitedAsEvidenceBy rdf:resource="https://doi.org/10.1234/123456789" />
@@ -268,11 +268,11 @@ Purpose blocks might look more like this:
 <purpose rdf:ID="claim">
   <!-- Describes a specific assertion -->
   <cito:supports>
-    <claim>
-      <subject rdf:resource="malaria" />
-      <predicate rdf:resource="isTransmittedBy" />
-      <object rdf:resource="isTransmittedBy" />
-    </claim>
+    <wikibase:Statement>
+      <subject rdf:resource="https://www.wikidata.org/entity/Q12156" /> <!-- Q12156 refers to malaria -->
+      <predicate rdf:resource="http://www.wikidata.org/prop/P1060" /> <!-- P1060 refers to disease transmission process (read: "is transmitted by") -->
+      <object rdf:resource="https://www.wikidata.org/entity/Q15304532" /> <!-- Q15304532 refers to mosquitoes -->
+    </wikibase:Statement>
   </cito:supports>
 </purpose>
 ```
@@ -280,18 +280,17 @@ Purpose blocks might look more like this:
 
 The block labeled `pub` uses the CiTO vocabulary \cite{shotton_cito_2010} to explain that the result of that process is used as evidence in a specific publication.
 If the publisher hosts an RDF description at the URL "https://doi.org/10.1234/123456789" when the HTTP request content-type header is `application/rdf+xml`, then this creates a web of linked data.
-The publisher may have the title, authors, date published, and other metadata using Dublin Core metadata terms, for example.
-<!-- cite Dublin core metadata terms -->
+The publisher may have the title, authors, date published, and other metadata using Dublin Core metadata terms [@weibel_dublin_2000], for example.
 This is the dream of linked data: machine-readable data by different authors hosted in different locations linking together seamlessly.
 Even if the publisher does not have an RDF+XML description, third parties can make claims about "https://doi.org/10.1234/123456789", although those claims would not be as easily discoverable.
 The purpose description can be even more granular, using the DoCO vocabulary \cite{constantin_document_2016}, which describes documents, as shown in the block labeled `fig-pub`.
 
-One could even reference a Nanopublication, which is a semantic web description of the scientific claim.
-The block labeled `claim` actually embeds the claim that it supports using the nanopublication vocabulary. <!-- TODO: cite -->
+One could even reference a Nanopublication, which is a semantic web description of the scientific claim \cite{groth_anatomy_2010}, as in the block labeled `claim`.
+The claim is itself a subject-predicate-object triple, in this case relating identifiers from Wikidata \cite{erxleben_introducing_2014} to express "malaria is transmitted by mosquitoes".
 
-With this complete, anyone should be able to execute the experiments which generate figures or claims in the paper if they are labeled by the computational scientist in this language.
+With this complete, anyone should be able to execute the experiments which supported publications, figures, or claims in the paper if they are labeled by the computational scientist in this language.
 
-In addition to specifying the computational environment and command to run, this language is an ideal candidate to also describe the parameters of the experiment, like:
+In addition to specifying the computational environment and command to run, this language is an ideal candidate to also describe the parameters of the experiment, perhaps using wfdesc [@soiland-reyes_wf4ever_2013].
 One could specify range of valid values or list options.
 With this complete, one can even do automated parameter-space search studies, multi-fidelity uncertainty quantification, automated outcome-preserving input minimization, and other automatic experiments.
 
@@ -313,20 +312,23 @@ With this complete, one can even do automated parameter-space search studies, mu
 \normalsize
 -->
 
+<!--
 Retrospective provenance seeks to encode how we got to a specific result.
 Developers can put summary statistics of intermediate results into the provenance description; if re-executions diverge, users can locate which stage amplifies error the most.
 A tool might use system-call interposition to learn about a processes reads, writes, and forks.
 This would be better at identifying and recording intermediate results.
 When reproducing some computational experiment, users can check the intermediate results to see where they begin to differ.
 Wfprov is one vocabulary for specifying retrospective provenance, and there is already an experimental plugin for Nextflow which targets wfprov \cite{grande_nf-prov_2023}.
-
+-->
 <!--
 Q: Developers may not know the answers to those questions...
 A: This would not be known a priori by developers; it would be after they do a real execution.
 -->
+<!--
 Users may also want to know how much computational resources (CPU time, disk space, and RAM) the computational experiment requires.
 Provenance is the ideal place for computational experiments who already ran the experiment to put this information.
 This way, users seeking to reproduce the computational experiment know how many resources to request (ahead-of-time allocations are usuually required for batch-scheduled machines).
+-->
 
 # Making easy on-ramps for adoption
 
@@ -334,9 +336,6 @@ The execution language should seek to describe existing software frameworks, not
 In particular, execution should not replace workflow engines.
 They should instead be wrapped as process-nodes within the execution language.
 Computational experiments can continue using their existing build-system and workflow.
-<!-- TODO: wokr this in
-
--->
 
 <!-- TODO: three onramps:
 1. Support from workflow

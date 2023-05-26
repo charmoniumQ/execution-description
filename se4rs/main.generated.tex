@@ -271,7 +271,6 @@ serve:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-
 \NormalTok{\textless{}}\KeywordTok{process}\OtherTok{ rdf:ID=}\StringTok{"make"}\NormalTok{\textgreater{}}
 \NormalTok{  \textless{}}\KeywordTok{command}\NormalTok{\textgreater{}make libs\textless{}/}\KeywordTok{command}\NormalTok{\textgreater{}}
 \NormalTok{  \textless{}}\KeywordTok{purpose}\NormalTok{\textgreater{}compiles libraries\textless{}/}\KeywordTok{purpose}\NormalTok{\textgreater{}}
@@ -309,33 +308,35 @@ more like this:
 
 \small
 
-\begin{verbatim}
-<purpose rdf:ID="pub">
-  <!-- Links to an entire publication -->
-  <cito:isCitedAsEvidenceBy rdf:resource="https://doi.org/10.1234/123456789" />
-</purpose>
-...
-<purpose rdf:ID="fig-pub">
-  <!-- Links to a specific figure within a publication -->
-  <prov:generated>
-    <doco:figure>
-      <dc:title>Figure 2b</dc:title>
-      <dc:isPartOf rdf:resource="https://doi.org/10.1234/123456789" />
-    </doco:figure>
-  </prov:generated>
-</purpose>
-...
-<purpose rdf:ID="claim">
-  <!-- Describes a specific assertion -->
-  <cito:supports>
-    <claim>
-      <subject rdf:resource="malaria" />
-      <predicate rdf:resource="isTransmittedBy" />
-      <object rdf:resource="isTransmittedBy" />
-    </claim>
-  </cito:supports>
-</purpose>
-\end{verbatim}
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\textless{}}\KeywordTok{purpose}\OtherTok{ rdf:ID=}\StringTok{"pub"}\NormalTok{\textgreater{}}
+  \CommentTok{\textless{}!{-}{-} Links to an entire publication {-}{-}\textgreater{}}
+\NormalTok{  \textless{}}\KeywordTok{cito:isCitedAsEvidenceBy}\OtherTok{ rdf:resource=}\StringTok{"https://doi.org/10.1234/123456789"}\NormalTok{ /\textgreater{}}
+\NormalTok{\textless{}/}\KeywordTok{purpose}\NormalTok{\textgreater{}}
+\NormalTok{...}
+\NormalTok{\textless{}}\KeywordTok{purpose}\OtherTok{ rdf:ID=}\StringTok{"fig{-}pub"}\NormalTok{\textgreater{}}
+  \CommentTok{\textless{}!{-}{-} Links to a specific figure within a publication {-}{-}\textgreater{}}
+\NormalTok{  \textless{}}\KeywordTok{prov:generated}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{doco:figure}\NormalTok{\textgreater{}}
+\NormalTok{      \textless{}}\KeywordTok{dc:title}\NormalTok{\textgreater{}Figure 2b\textless{}/}\KeywordTok{dc:title}\NormalTok{\textgreater{}}
+\NormalTok{      \textless{}}\KeywordTok{dc:isPartOf}\OtherTok{ rdf:resource=}\StringTok{"https://doi.org/10.1234/123456789"}\NormalTok{ /\textgreater{}}
+\NormalTok{    \textless{}/}\KeywordTok{doco:figure}\NormalTok{\textgreater{}}
+\NormalTok{  \textless{}/}\KeywordTok{prov:generated}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}/}\KeywordTok{purpose}\NormalTok{\textgreater{}}
+\NormalTok{...}
+\NormalTok{\textless{}}\KeywordTok{purpose}\OtherTok{ rdf:ID=}\StringTok{"claim"}\NormalTok{\textgreater{}}
+  \CommentTok{\textless{}!{-}{-} Describes a specific assertion {-}{-}\textgreater{}}
+\NormalTok{  \textless{}}\KeywordTok{cito:supports}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{claim}\NormalTok{\textgreater{}}
+\NormalTok{      \textless{}}\KeywordTok{subject}\OtherTok{ rdf:resource=}\StringTok{"malaria"}\NormalTok{ /\textgreater{}}
+\NormalTok{      \textless{}}\KeywordTok{predicate}\OtherTok{ rdf:resource=}\StringTok{"isTransmittedBy"}\NormalTok{ /\textgreater{}}
+\NormalTok{      \textless{}}\KeywordTok{object}\OtherTok{ rdf:resource=}\StringTok{"isTransmittedBy"}\NormalTok{ /\textgreater{}}
+\NormalTok{    \textless{}/}\KeywordTok{claim}\NormalTok{\textgreater{}}
+\NormalTok{  \textless{}/}\KeywordTok{cito:supports}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}/}\KeywordTok{purpose}\NormalTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
 
 \normalsize
 
