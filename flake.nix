@@ -106,7 +106,7 @@
                     if [ $pandoc_success -ne 0 ]; then
                       exit $pandoc_success
                     fi
-                    latexmk ${latexmkFlagForEngine} -emulate-aux-dir -outdir=$tmp -auxdir=$tmp -Werror $out/${latexStem}
+                    latexmk ${latexmkFlagForEngine} -quiet -emulate-aux-dir -outdir=$tmp -auxdir=$tmp -Werror $out/${latexStem}
                     latexmk_status=$?
                     if [ $latexmk_status -ne 0 ]; then
                       mv $tmp/${latexStem}.log $out
@@ -115,7 +115,6 @@
                       exit $latexmk_status
                     fi
                     mv $tmp/${latexStem}.pdf $out
-                    ls -halt $tmp
                   '';
                   phases = [ "unpackPhase" "buildPhase" ];
                 }

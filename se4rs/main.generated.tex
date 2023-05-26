@@ -7,8 +7,8 @@
 % ACM options first in the order they appear in acmguide.pdf
 
 
-  \acmConference[]{Software Engineering for Research Software}{July
-23--27, 2023}{Portland, OR, USA}
+  \acmConference[]{Soft. Eng. 4 Res. Sci.}{July 23--27, 2023}{Portland,
+OR}
 
 \title{Wanted: standards for automatic reproducibility of computational
 experiments}
@@ -69,10 +69,7 @@ experiments}
     %
     \institution{University of Illinois Urbana-Champaign Department of
 Computer Science}%
-    \department{Department of Computer Science}\department{National
-Center for Supercomputing Applications}\department{Deparment of
-Electrical and Computer Engineering}\department{School of Information
-Sciences}%
+    \department{Department of Computer Science}%
     \streetaddress{201 North Goodwin Avenue MC 258}%
     \city{Urbana}%
     \state{IL}%
@@ -227,6 +224,138 @@ perspective, having a standardized way to run many different codes at
 scale would open new avenues for data mining research on reproducibility
 (c.f., \cite{collberg_repeatability_2016}).
 
+\hypertarget{towards-specification-standards-for-automated-reproducibility-assessment}{%
+\section{Towards Specification Standards for Automated Reproducibility
+Assessment}\label{towards-specification-standards-for-automated-reproducibility-assessment}}
+
+At present, there are a diverse range of solutions for expressing how a
+code should be run, including bash scripts, environment management
+specifications (e.g., Spack, Nix, Python Virtualenv), continuous
+integration scripts, workflows, and container specifications. In our own
+research on reproducibility of scientific codes, as we scale up our
+studies to include many different codes, keeping track of how to execute
+each one becomes very complicated. Moreover, when a code fails to run or
+deliver reproducible results, it is difficult to assess whether there is
+a fault with the code or whether we failed to run the code in the
+correct way. While we do not expect (or recommend) that the scientific
+software community converge on a single solution for executing codes, we
+do see value in having a standard way of documenting how each code ought
+to be run. Such a standard could be implemented as a linked-data
+ontology like the semantic web. This would enable us to build on a rich
+set of ontologies for describing digital and physical resources
+(RO-crate \cite{soiland-reyes_packaging_2022}, Dublin Core metadata
+terms \cite{weibel_dublin_2000}, Description of a Project
+\cite{wilder-james_description_2017}, nanopublications
+\cite{groth_anatomy_2010}, Citation Typing Ontology
+\cite{shotton_cito_2010}, Documnet Componnets Ontology
+\cite{constantin_document_2016}) and leverage the ecosytem of existing
+tools for ontology management (Protégé editor, SHACL, SHEX).
+
+At a very basic level, one could specify available commands and the
+purpose that they serve (e.g., run make to compile underlying libraries
+and run main.py to generate figures). But more than just that, a linked
+data specification standard would enable researchers to link inputs and
+outputs of codes directly to claims made in publications. With such a
+specification, any person (or program) should be able to execute the
+experiments which generate figures or claims in an accompanying paper.
+For example, the CiTO vocabulary \cite{shotton_cito_2010} can be used to
+how the result of a process is used as evidence in a specific
+publication. These references could be connected to other references of
+the same publication on the semantic web. The description can be even
+more granular, such as by using the DoCO vocabulary
+\cite{constantin_document_2016} to point to specific elements (e.g.,
+figures) within a document, or using Nanopublication
+\cite{groth_anatomy_2010} to reference specific scientific claims.
+RO-crate \cite{soiland-reyes_wf4ever_2013} has terms for describing
+dependencies between steps, which can be used to encode dependent steps
+or specify the computational environment. This would not replace any of
+the underlying tools, libraries, or frameworks used at present, but it
+would provide a common vocabulary for explaining how those tools,
+libraries, and frameworks are employed. Such a specification language
+could also be used to set bounds on the parameters of the experiment,
+such as the range of valid values or a list of toggleable parameters;
+this would enable downstream automated experiments like parameter-space
+search studies, multi-fidelity uncertainty quantification, and
+outcome-preserving input minimization.
+
+\hypertarget{incentivizing-adoption-of-specifications}{%
+\section{Incentivizing Adoption of
+Specifications}\label{incentivizing-adoption-of-specifications}}
+
+With a defined specification language in place, tooling could be built
+to make it as easy as possible to generate a specification document. For
+example, an execution description could be ``captured'' from an
+interactive shell session with the user. They would invoke a shell that
+records every command, its exit status, its read-files, and its
+write-files (using syscall interposition); When the user exits, the
+shell will create a directed acyclic graph based on the read-files and
+write-files, and for each output file that is not consumed by another
+command, the shell would prompt the user to describe that command's
+purpose. Alternatively, in cases where the description cannot be
+captured by an interactive shell session, it may be possible to encode a
+system of logic that humans would use to deduce the experimental
+structure; this is similar to the approach taken by FlaPy
+\cite{gruber_empirical_2021}, a large-scale re-execution study for
+Python unittests, to install the Python environment.
+
+Meanwhile, conferences and publishers could promote the use of such
+standard specifications as part of reproducibility requirements for
+publishing. To get an artifact evaluation badge, normally computational
+scientists would have to write a natural language description of what
+the software environment, what the commands are, how to run them, and
+where does the data end up; meanwhile, an artifact evaluator has to
+read, interpret, and execute their description by hand. An execution
+description could make this nearly automatic; if a execution description
+exists, the artifact evaluator uses an executor which understands the
+language and runs all of the commands that reference the manuscript in
+their \texttt{purpose} tag. The only manual labor is comparing these
+results to those in the paper. Even that comparison can be simplified,
+if the last step in the execution description outputs a boolean
+representing ``is the hypothesis proven?''; the reviewer just needs to
+see that all of these output ``true''.
+
+\hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
+
+In this position paper, we argue that developing common standards for
+specifying how computational experiments should be run to get
+reproducible results would benefit the scientific community. It presents
+a compromise where different teams can implement their codes in whatever
+way they see fit while enabling others to easily run them. This would
+lead to greater productivity in the (re)use of scientific experiments,
+empower developers to build tools that leverage those common
+specifications, and enable software engineering researchers to study
+reproducibility at scale.
+
+\hypertarget{appendix-i-example-document}{%
+\section{Appendix I: Example
+document}\label{appendix-i-example-document}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{\textless{}?xml}\OtherTok{ version=}\StringTok{"1.0"}\FunctionTok{?\textgreater{}}
+\NormalTok{\textless{}}\KeywordTok{rdf:RDF}
+\OtherTok{  xmlns:rdf=}\StringTok{"http://www.w3.org/1999/02/22{-}rdf{-}syntax{-}ns\#"}
+\OtherTok{  xmlns=}\StringTok{"https://example.com/"}
+\NormalTok{\textgreater{}}
+\CommentTok{\textless{}!{-}{-}}
+\CommentTok{The RDF tag defines several XML namespaces.}
+
+\CommentTok{In this document "rdf:label" refers to http://www.w3.org/1999/02/22{-}rdf{-}syntax{-}ns\#label}
+\CommentTok{{-}{-}\textgreater{}}
+\NormalTok{\textless{}}\KeywordTok{process}\OtherTok{ rdf:ID=}\StringTok{"make"}\NormalTok{\textgreater{}}
+\NormalTok{  \textless{}}\KeywordTok{command}\NormalTok{\textgreater{}make libs\textless{}/}\KeywordTok{command}\NormalTok{\textgreater{}}
+\NormalTok{  \textless{}}\KeywordTok{purpose}\NormalTok{\textgreater{}compiles libraries\textless{}/}\KeywordTok{purpose}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}/}\KeywordTok{process}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}}\KeywordTok{process}\OtherTok{ rdf:ID=}\StringTok{"figures"}\NormalTok{\textgreater{}}
+\NormalTok{  \textless{}}\KeywordTok{command}\NormalTok{\textgreater{}python3 main.py\textless{}/}\KeywordTok{command}\NormalTok{\textgreater{}}
+\NormalTok{  \textless{}}\KeywordTok{purpose}\NormalTok{\textgreater{}generates figures\textless{}/}\KeywordTok{purpose}\NormalTok{\textgreater{}}
+\NormalTok{  \textless{}}\KeywordTok{depends\_on}\OtherTok{ rdf:resource=}\StringTok{"\#make"}\NormalTok{ /\textgreater{}}
+\NormalTok{\textless{}/}\KeywordTok{process}\NormalTok{\textgreater{}}
+\NormalTok{\textless{}/}\KeywordTok{rdf:RDF}\NormalTok{\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
 \hypertarget{how-to-get-automatic-reproducibility}{%
 \section{How to get automatic
 reproducibility}\label{how-to-get-automatic-reproducibility}}
@@ -235,31 +364,6 @@ This is not the final proposal for the complete vocabulary; the
 peer-review process is not well-suited to iterate on technical details.
 The point of this article is to argue that the community should spend
 effort developing this vocabulary.
-
-\hypertarget{semantic-web}{%
-\subsection{Semantic web}\label{semantic-web}}
-
-This language could be implemented as a vocabulary for linked data in
-the semantic web. Linked data is preferrable for these reasons:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Linked data is open to extensions.
-\item
-  It is possible to link to other resources in linked data.
-\item
-  There is already a rich set of ontologies for describing digital and
-  physical resources (RO-crate, wf4prov, software project description,
-  scientific hypotheses, CiTO) in linked data.
-\item
-  There is already a rich ecosystem for authoring ontologies and
-  validating documents within those ontologies.
-\end{enumerate}
-
-Linked data is already used for other long-term preservation standards,
-such as RO-crate and Bio.
 
 \hypertarget{language-description}{%
 \subsection{Language description}\label{language-description}}
@@ -286,15 +390,16 @@ serve:
 \normalsize
 
 The process labeled \texttt{figures} references the process labeled make
-as a prerequisite using the XML RDF reference syntax. The example
-depects a simple \texttt{depends\_on} predicate, but one might use the
-albeit more complex wfdesc vocabulary to describe these dependencies.
-One can view specifying the software environment as just prerequisite
-steps in the computational DAG{[}\^{}define-dag{]}. The purpose of an
-execution language is not to usurp the build-system or workflow engine,
-which both already handle task DAGs; there must be some minimal support
-for DAGs just for the cases where the DAG of tasks is not already
-encoded in a build-system or workflow engine.
+as a prerequisite using the XML RDF reference syntax
+\cite{gandon_rdf_2014}. The example depects a simple
+\texttt{depends\_on} predicate, but one might use the albeit more
+complex wfdesc vocabulary \cite{soiland-reyes_wf4ever_2013} to describe
+these dependencies. One can view specifying the software environment as
+just prerequisite steps in the computational DAG{[}\^{}define-dag{]}.
+The purpose of an execution language is not to usurp the build-system or
+workflow engine, which both already handle task DAGs; there must be some
+minimal support for DAGs just for the cases where the DAG of tasks is
+not already encoded in a build-system or workflow engine.
 
 {[}define-dag{]}: A computaitonal directed acyclic graph (DAG) is a set
 of programs and pairs of programs (called links), where each link
@@ -328,11 +433,11 @@ more like this:
 \NormalTok{\textless{}}\KeywordTok{purpose}\OtherTok{ rdf:ID=}\StringTok{"claim"}\NormalTok{\textgreater{}}
   \CommentTok{\textless{}!{-}{-} Describes a specific assertion {-}{-}\textgreater{}}
 \NormalTok{  \textless{}}\KeywordTok{cito:supports}\NormalTok{\textgreater{}}
-\NormalTok{    \textless{}}\KeywordTok{claim}\NormalTok{\textgreater{}}
-\NormalTok{      \textless{}}\KeywordTok{subject}\OtherTok{ rdf:resource=}\StringTok{"malaria"}\NormalTok{ /\textgreater{}}
-\NormalTok{      \textless{}}\KeywordTok{predicate}\OtherTok{ rdf:resource=}\StringTok{"isTransmittedBy"}\NormalTok{ /\textgreater{}}
-\NormalTok{      \textless{}}\KeywordTok{object}\OtherTok{ rdf:resource=}\StringTok{"isTransmittedBy"}\NormalTok{ /\textgreater{}}
-\NormalTok{    \textless{}/}\KeywordTok{claim}\NormalTok{\textgreater{}}
+\NormalTok{    \textless{}}\KeywordTok{wikibase:Statement}\NormalTok{\textgreater{}}
+\NormalTok{      \textless{}}\KeywordTok{subject}\OtherTok{ rdf:resource=}\StringTok{"https://www.wikidata.org/entity/Q12156"}\NormalTok{ /\textgreater{} }\CommentTok{\textless{}!{-}{-} Q12156 refers to malaria {-}{-}\textgreater{}}
+\NormalTok{      \textless{}}\KeywordTok{predicate}\OtherTok{ rdf:resource=}\StringTok{"http://www.wikidata.org/prop/P1060"}\NormalTok{ /\textgreater{} }\CommentTok{\textless{}!{-}{-} P1060 refers to disease transmission process (read: "is transmitted by") {-}{-}\textgreater{}}
+\NormalTok{      \textless{}}\KeywordTok{object}\OtherTok{ rdf:resource=}\StringTok{"https://www.wikidata.org/entity/Q15304532"}\NormalTok{ /\textgreater{} }\CommentTok{\textless{}!{-}{-} Q15304532 refers to mosquitoes {-}{-}\textgreater{}}
+\NormalTok{    \textless{}/}\KeywordTok{wikibase:Statement}\NormalTok{\textgreater{}}
 \NormalTok{  \textless{}/}\KeywordTok{cito:supports}\NormalTok{\textgreater{}}
 \NormalTok{\textless{}/}\KeywordTok{purpose}\NormalTok{\textgreater{}}
 \end{Highlighting}
@@ -347,51 +452,35 @@ RDF description at the URL ``https://doi.org/10.1234/123456789'' when
 the HTTP request content-type header is \texttt{application/rdf+xml},
 then this creates a web of linked data. The publisher may have the
 title, authors, date published, and other metadata using Dublin Core
-metadata terms, for example. This is the dream of linked data:
-machine-readable data by different authors hosted in different locations
-linking together seamlessly. Even if the publisher does not have an
-RDF+XML description, third parties can make claims about
-``https://doi.org/10.1234/123456789'', although those claims would not
-be as easily discoverable. The purpose description can be even more
+metadata terms \cite{weibel_dublin_2000}, for example. This is the dream
+of linked data: machine-readable data by different authors hosted in
+different locations linking together seamlessly. Even if the publisher
+does not have an RDF+XML description, third parties can make claims
+about ``https://doi.org/10.1234/123456789'', although those claims would
+not be as easily discoverable. The purpose description can be even more
 granular, using the DoCO vocabulary \cite{constantin_document_2016},
 which describes documents, as shown in the block labeled
 \texttt{fig-pub}.
 
 One could even reference a Nanopublication, which is a semantic web
-description of the scientific claim. The block labeled \texttt{claim}
-actually embeds the claim that it supports using the nanopublication
-vocabulary.
+description of the scientific claim \cite{groth_anatomy_2010}, as in the
+block labeled \texttt{claim}. The claim is itself a
+subject-predicate-object triple, in this case relating identifiers from
+Wikidata \cite{erxleben_introducing_2014} to express ``malaria is
+transmitted by mosquitoes''.
 
 With this complete, anyone should be able to execute the experiments
-which generate figures or claims in the paper if they are labeled by the
-computational scientist in this language.
+which supported publications, figures, or claims in the paper if they
+are labeled by the computational scientist in this language.
 
 In addition to specifying the computational environment and command to
 run, this language is an ideal candidate to also describe the parameters
-of the experiment, like: One could specify range of valid values or list
-options. With this complete, one can even do automated parameter-space
-search studies, multi-fidelity uncertainty quantification, automated
-outcome-preserving input minimization, and other automatic experiments.
-
-Retrospective provenance seeks to encode how we got to a specific
-result. Developers can put summary statistics of intermediate results
-into the provenance description; if re-executions diverge, users can
-locate which stage amplifies error the most. A tool might use
-system-call interposition to learn about a processes reads, writes, and
-forks. This would be better at identifying and recording intermediate
-results. When reproducing some computational experiment, users can check
-the intermediate results to see where they begin to differ. Wfprov is
-one vocabulary for specifying retrospective provenance, and there is
-already an experimental plugin for Nextflow which targets wfprov
-\cite{grande_nf-prov_2023}.
-
-Users may also want to know how much computational resources (CPU time,
-disk space, and RAM) the computational experiment requires. Provenance
-is the ideal place for computational experiments who already ran the
-experiment to put this information. This way, users seeking to reproduce
-the computational experiment know how many resources to request
-(ahead-of-time allocations are usuually required for batch-scheduled
-machines).
+of the experiment, perhaps using wfdesc
+\cite{soiland-reyes_wf4ever_2013}. One could specify range of valid
+values or list options. With this complete, one can even do automated
+parameter-space search studies, multi-fidelity uncertainty
+quantification, automated outcome-preserving input minimization, and
+other automatic experiments.
 
 \hypertarget{making-easy-on-ramps-for-adoption}{%
 \section{Making easy on-ramps for
@@ -455,12 +544,8 @@ Type annotations are easiest to maintain in the original repository, but
 if the original repository rejects type annotations, there is still a
 home for them in typeshed.
 
-\hypertarget{is-this-another-competing-standard}{%
-\section{Is this another competing
-standard?}\label{is-this-another-competing-standard}}
-
-It is something extra users have to do, but it does not attempt to
-displace their existing practice.
+Is this another competing standard? It is something extra users have to
+do, but it does not attempt to displace their existing practice.
 
 \hypertarget{incentives-for-computational-scientists-to-maintain-execution-descriptions}{%
 \section{Incentives for computational scientists to maintain execution
