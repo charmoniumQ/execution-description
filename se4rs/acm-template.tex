@@ -208,10 +208,8 @@ $if(acks)$\begin{acks}$acks$\end{acks}$endif$
 %\printbibliography
 %$endif$
 
-\bibliographystyle{plain}
-$for(bibliography)$
-\bibliography{$bibliography$}
-$endfor$
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
 
 $for(include-after)$
 $include-after$

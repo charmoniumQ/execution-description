@@ -50,3 +50,29 @@ Linked data is preferrable for these reasons:
 
 Using linked data to describing scientific workflows has already been suggested by Garijo and Gil in OPMW [@garijo_new_2011], Soiland-Reyes et al. in RO-Crate [@soiland-reyes_packaging_2022], and Gray et al. in Bioschemas [@gray_bioschemas_2017], which indicates confidence in its flexibility and long-term support.
 It is a natural extension to use linked data to specify metadata about the experiment in this language.
+
+...
+
+The execution description is linked data, so it can live anywhere, and existing strategies for finding, filtering, and trusting linked data sets would work for execution descriptions.
+
+...
+
+This is the dream of linked data: machine-readable data by different authors hosted in different locations linking together seamlessly.
+Even if the publisher does not have an RDF+XML description, third parties can make claims about "https://doi.org/10.1234/123456789", although those claims would not be as easily discoverable.
+The purpose description can be even more granular, using the DoCO vocabulary \cite{constantin_document_2016}, which describes documents, as shown in the block labeled `fig-pub`.
+
+# Retrospective provenance
+
+Retrospective provenance seeks to encode how we got to a specific result.
+Developers can put summary statistics of intermediate results into the provenance description; if re-executions diverge, users can locate which stage amplifies error the most.
+A tool might use system-call interposition to learn about a processes reads, writes, and forks.
+This would be better at identifying and recording intermediate results.
+When reproducing some computational experiment, users can check the intermediate results to see where they begin to differ.
+Wfprov is one vocabulary for specifying retrospective provenance, and there is already an experimental plugin for Nextflow which targets wfprov \cite{grande_nf-prov_2023}.
+<!--
+Q: Developers may not know the answers to those questions...
+A: This would not be known a priori by developers; it would be after they do a real execution.
+-->
+Users may also want to know how much computational resources (CPU time, disk space, and RAM) the computational experiment requires.
+Provenance is the ideal place for computational experiments who already ran the experiment to put this information.
+This way, users seeking to reproduce the computational experiment know how many resources to request (ahead-of-time allocations are usuually required for batch-scheduled machines).

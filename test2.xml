@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:dc="http://purl.org/dc/elements/1.1/"
-		 xmlns:ex="https://example.com/">
-  <ex:Document rdf:about="http://example.org/thing">
-    <dc:title>RDF 1.1 XML Syntax</dc:title>
-	<dc:isPartOf rdf:resource="https://doi.org/10.1234/123456789" />
-  </ex:Document>
-</rdf:RDF>

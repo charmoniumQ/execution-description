@@ -28,14 +28,10 @@
                 name = "se4rs";
                 mainSrc = "main.md";
                 latexTemplate = "acm-template.tex";
-                bibliographies = [
-                  ./se4rs/sams_zotero_export.bib
-                  ./se4rs/manual.bib
-                ];
                 texlivePackages = {
                   inherit (pkgs.texlive)
                     latexmk
-                    scheme-basic
+                    scheme-small
                     collection-luatex
                     acmart
                     amsfonts
@@ -99,14 +95,13 @@
                     export SOURCE_DATE_EPOCH=${builtins.toString date}
                     set -x +e
                     mkdir $out
-                    cat ${builtins.concatStringsSep " " bibliographies} > main.bib
                     ${pkgs.pandoc}/bin/pandoc --to=latex --output=$out/${latexStem}.tex --template=${latexTemplate} ${mainSrc}
                     pandoc_success=$?
                     set +x -e
                     if [ $pandoc_success -ne 0 ]; then
                       exit $pandoc_success
                     fi
-                    latexmk ${latexmkFlagForEngine} -quiet -emulate-aux-dir -outdir=$tmp -auxdir=$tmp -Werror $out/${latexStem}
+                    latexmk ${latexmkFlagForEngine} -emulate-aux-dir -outdir=$tmp -auxdir=$tmp -Werror $out/${latexStem}
                     latexmk_status=$?
                     if [ $latexmk_status -ne 0 ]; then
                       mv $tmp/${latexStem}.log $out
