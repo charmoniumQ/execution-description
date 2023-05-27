@@ -14,4 +14,10 @@ if [ -f result/main.pdf ]; then
 	chmod 644 se4rs/main.pdf
 fi
 
+rm -f se4rs/main-blank.pdf
+if [ -f result/main2.pdf ]; then
+	cp result/main2.pdf se4rs/main-blank.pdf
+	chmod 644 se4rs/main-blank.pdf
+fi
+
 unlink result

@@ -105,6 +105,10 @@
                       exit $latexmk_status
                     fi
                     mv $tmp/${latexStem}.pdf $out
+
+                    # ${pkgs.pandoc}/bin/pandoc --output=$out/main2.tex --template=${latexTemplate} main2.md
+                    # latexmk ${latexmkFlagForEngine} -emulate-aux-dir -outdir=$tmp -auxdir=$tmp -Werror $out/main2
+                    # mv $tmp/main2.pdf $out
                   '';
                   phases = [ "unpackPhase" "buildPhase" ];
                 }

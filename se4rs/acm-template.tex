@@ -42,7 +42,7 @@ $if(publisher.isbn)$\acmISBN{$publisher.isbn$}$endif$
 $if(publisher.doi)$\acmDOI{$publisher.doi$}$endif$
 $for(publisher.acmBadge)$\acmBadge[publisher.acmBadge.link]{publisher.acmBadge.pdfImage}$endfor$
 $if(publisher.startPage)$\startPage{$publisher.startPage$}$endif$
-$if(keywords)$\keywords{$for(keywords)$ $keywords$ $sep$, $endfor$}$endif$
+$if(keywords)$\keywords{$for(keywords)$$keywords$$sep$, $endfor$}$endif$
 $if(ccsxml)$ $ccsxml$ $endif$
 $if(publisher.copyright)$\setcopyright{$publisher.copyright$}$endif$
 $if(publisher.cctype)$\setcctype$if(publisher.cctypeVersion)$[$publisher.cctypeVersion$]$endif${$publisher.cctype$}$endif$

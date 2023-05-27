@@ -82,15 +82,16 @@ author:
       postcode: 61801-2302
 classoption:
   - manuscript
-  - authordraft
 papersize: letter
 pagestyle: plain
 lang: en-US
 standalone: yes # setting to yes calls \maketitle
 number-sections: yes
 indent: no
-#keywords:
-#  - pass
+keywords:
+  - reproducibility
+  - linked data
+  - semantic web
 publisher:
   # received_date: 20 February 2007
   # revised_date: 12 March 2009
@@ -141,24 +142,16 @@ topmatter: printacmref=false
 shortauthors: Grayson et al.
 ---
 
-<!--
-Terms:
-- computational experiment
-- computational scientist
-- software-engineering researcher
--->
-
 # Introduction
 
-A computational experiment is reproducible if another team using the same experimental infrastructure can make a measurement that concurs with the original.
-In practice, reproducers often need to manually work with the code to see how to build necessary libraries, configure parameters, find data, and invoke the experiment; it is not _automatic_.
+In practice, those seeking to reproduce a computational experiment often need to manually look at the code to see how to build necessary libraries, configure parameters, find data, and invoke the experiment; it is not _automatic_.
 Automatic reproducibility is a more stringent goal, but working towards it would benefit the community.
-
 This work discusses a machine-readable language for specifying how to execute a computational experiment.
-It is not enough for the language to merely contain a run command in a heap of other commands;
+
+There is no existing standard place to put the "main" command which executes an experiment.
 e.g., a Makefile which defines a rule for executing the experiment alongside rules for compiling intermediate pieces is not sufficient because there is no machine-readable way to know which of the Make rules executes the experiment.
-Being able to automatically identify the "main" command which executes the experiment, for instance, would be very useful for those seeking to reproduce results from past experiments or reusing experiments to address new use cases.
-Moreover, from a research perspective, having a standardized way to run many different codes at scale would open new avenues for data mining research on reproducibility (c.f., \cite{collberg_repeatability_2016}).
+Automatically identifying the "main" command would be very useful for those seeking to reproduce results from past experiments or reusing experiments to address new use cases.
+For software engineering researchers, having a standardized way to run many different codes at scale would open new avenues for data mining research on reproducibility (c.f., \cite{collberg_repeatability_2016,zhao_why_2012,trisovic_large-scale_2022}).
 We invite interested stakeholders to discuss this language at <https://github.com/charmoniumQ/execution-description>.
 
 Even with workflows, correctly invoking the experiment is still not automatic.
@@ -168,47 +161,46 @@ For example, the Snakemake workflow engine has a standard^[See Snakemake Catalog
 
 # Towards a Standard for Automatic Reproducibility
 
-There is a diverse range of solutions for expressing how to run code, including bash scripts, environment management specifications (e.g., Spack, Nix, Python Virtualenv), continuous integration scripts, workflows, and container specifications.
-In our research on the reproducibility of scientific codes, as we scale up our studies to include many different codes, keeping track of how to execute each one becomes very complicated.
-Moreover, when a code fails to run or deliver reproducible results, it is difficult to assess whether there is a fault with the code or whether we did not invoke the code as intended.
+There are many solutions for expressing how to run code, including bash scripts, continuous integration scripts, workflows, and container specifications.
+One can manually sleuth around how to run a handful of experiments, but large-scale reproduction studies need to analyze hundreds or thousands of codes \cite{collberg_repeatability_2016,zhao_why_2012,grayson_automatic_2023}.
+They each use different tools to invoke their experiment.
+Moreover, when a code crashes in such a study, it is difficult to assess whether there is a fault with the code or whether the study did not invoke the code as intended.
 While we do not expect (or recommend) that the scientific software community converge on a single solution for executing codes, we see value in having a standard way of documenting how to run each code that could hand off to the user's tool of choice.
 
-One could implement such a language using linked-data on the semantic web.
-Defining the language in linked data lets us seamlessly link to existing resources described by existing ontologies such as RO-crate \cite{soiland-reyes_packaging_2022}, Dublin Core metadata terms \cite{weibel_dublin_2000}, Description of a Project \cite{wilder-james_description_2017}, nanopublications \cite{groth_anatomy_2010}, Citation Typing Ontology \cite{shotton_cito_2010}, and Document Components Ontology \cite{constantin_document_2016}.
+One could implement such a specification using linked-data on the semantic web.
+Defining the language in linked data lets one link to existing data and reuse existing ontologies such as RO-crate \cite{soiland-reyes_packaging_2022}, Dublin Core metadata terms \cite{weibel_dublin_2000}, Description of a Project \cite{wilder-james_description_2017}, nanopublications \cite{groth_anatomy_2010}, Citation Typing Ontology \cite{shotton_cito_2010}, and Document Components Ontology \cite{constantin_document_2016}.
 
-At the most basic level, the automatic reproducibility specification should allow one to specify available commands and a fixed string describing their purpose, e.g., run make to compile underlying libraries and run main.py to generate figures (see `#make` Appendix I).
+At the most basic level, the automatic reproducibility specification should allow one to specify relevant commands and a string describing their purpose (see `#make` the appendix).
 The strings could be something like "compile", "run", or "make-figures", which would be used the same way by multiple projects.
 However, the language should go beyond fixed-strings.
 
-The language should allow users to link code directly to claims made in publications (see `#links-to-pub` in Appendix I).
+The language should allow users to link commands directly to claims made in publications (see `#links-to-pub` in the appendix).
 With such a specification, any person (or program) should be able to execute the experiments which generate figures or claims in an accompanying paper.
 For example, the CiTO vocabulary \cite{shotton_cito_2010} can encode to how the result is used as evidence in a specific publication.
-These references could connect to other references of the same publication on the semantic web.
 
-The description can be even more granular than a publication or a fixed string.
-One could use the DoCO vocabulary \cite{constantin_document_2016} to point to specific elements (e.g., figures, tables, or sentences) within a document.
-Alternatively, one could reference specific scientific published or unpublished claims using the Nanopublication vocabulary \cite{groth_anatomy_2010} (see `#links-to-fig`, `#defines-nanopub`, and `#links-to-nanopub` in Appendix I).
+The description can be even more granular than a publication.
+One could use the DoCO vocabulary \cite{constantin_document_2016} to point to specific figures, tables, or sentences within a document.
+Alternatively, one could reference specific scientific claims using the Nanopublication vocabulary \cite{groth_anatomy_2010} (see `#links-to-fig`, `#defines-nanopub`, and `#links-to-nanopub` in the appendix).
 
-RO-crate \cite{soiland-reyes_wf4ever_2013} has terms for describing dependencies between steps, which can be used to encode dependent steps or specify the computational environment (see `#make-data` and `#plot-figures` in Appendix I).
+RO-crate \cite{soiland-reyes_wf4ever_2013} has terms for describing dependencies between steps, which can be used to encode dependent steps (see `#make-data` and `#plot-figures` in the appendix).
+If the code requires a specific computational environment, building that environment can be a prerequisite step.
 The purpose of encoding dependencies is not to usurp the build-system or workflow engine, which both already handle task dependencies;
 if the experiment already uses a workflow, then the specification should invoke that.
 The purpose of task dependencies in the specification is for projects which do not use a workflow engine, or a task that installs the desired workflow engine.
 
-Such a specification could also set bounds on the experiment's parameters, such as the range of valid values or a list of toggleable parameters.
-See node `#example-of-parameters` in Appendix I for example.
+Such a specification could also set bounds on the experiment's parameters, such as the range of valid values or a list of toggleable parameters (see `#example-of-parameters` in the appendix).
 This parameter metadata would enable downstream automated experiments like parameter-space search studies, multi-fidelity uncertainty quantification, and outcome-preserving input minimization.
 
 # Getting Adoption
 
-The most useful part of the specification would need _some_ human input to create; it is not just specifying tasks but what those steps do.
+The most useful part of the specification would need _some_ human input to create, which is specifying what the tasks do.
 However, we can reduce the manual effort needed to write the specification.
 
-Workflow engines could assist in generating this.
-Workflow engines know all the computational steps, inputs, outputs, and parameters.
-Then it could prompt the user with high-level questions (e.g., "What publication is this part of"?) and generate the appropriate specification.
+Workflow engines could assist in generating this, since they know all the computational steps, inputs, outputs, and parameters.
+Then it could prompt the user with high-level questions (e.g., "What publication is this part of"?) and generate the appropriate specification to invoke themselves.
 
 If the experiment does not use a workflow engine, but someone who can run the experiment is available, an interactive shell session can capture and write the specification.
-The user would invoke a shell that records every command, its exit status, its read-files, and its write-files (using syscall interposition);
+The user would invoke a shell that records every command, its exit status, its read-files, and its write-files using syscall interposition.
 The user would run their code as usual, and after finishing, the shell would assemble the necessary computational steps and prompt the user for high-level questions.
 
 As a last resort, if one finds a publication linking to a specific repository, one can try to guess the main command.
@@ -217,19 +209,19 @@ Computational scientists at least had an opportunity to influence how to invoke 
 The lack of opportunity for input was a frequent response of scientists to Collberg and Proebsting[^collberg-comments].
 
 [^collberg-comments]:
-See "Author Comments" in <http://reproducibility.cs.arizona.edu/v2/index.html>.
-The authors of publications whose labels are BarowyCBM12, BarthePB12, HolewinskiRRFPRS12, and others responded to Collberg and Proebsting (paraphrasing), "it would have worked; you just didn't invoke the right commands."
+The authors of publications whose labels are BarowyCBM12, BarthePB12, HolewinskiRRFPRS12, and others responded to Collberg and Proebsting (paraphrasing), "it would have worked; you just didn't invoke the right commands." according to <http://reproducibility.cs.arizona.edu/v2/index.html>.
 
 Computational scientists could benefit from creating these automated reproducibility specifications because large-scale reproduction studies like Collberg and Proebsting \cite{collberg_repeatability_2016}, Zhao et al. \cite{zhao_why_2012}, and others serve as free testing and reproduction of their results.
 
 Ideally, the reproduction specification would be placed in the same location as the computational experiment, often a GitHub repository, so developers can maintain it alongside the code.
-In cases where the authors of the GitHub repository are not cooperative, one can instead put reproduction specifications in a repository that holds reproduction specifications from the community, a "reproducibility library".
-Users seeking to reproduce a repository would invoke a tool that looks for an automatic reproducibility specification in the source code repository, in a list of reproducibility libraries, and if none exists there, falls back on heuristic to guess how to reproduce the experiment.
+In cases where the authors of the GitHub repository are not cooperative, one can instead put reproduction specifications in a repository that holds reproduction specifications written by the community, a "reproducibility library".
+Users seeking to reproduce a repository would invoke a tool that looks for an automatic reproducibility specification in the source code repository, in a list of reproducibility libraries, and if none is found, falls back on heuristic to guess how to reproduce the experiment.
+The heuristic might have cases such as, "if a Make file exists, run `make all`".
 If the fallback succeeds, the tool can upload all its steps to a reproducibility library.
 
 Meanwhile, conferences and publishers could promote such standard specifications as part of reproducibility requirements for publishing.
 Currently, to get an artifact evaluation badge, computational scientists would have to write a natural language description of the software environment, what the commands are, how to run them, and where the data end up; meanwhile, an artifact evaluator has to read, interpret, and execute their description by hand.
-An execution description could make this nearly automatic; if an execution description exists, the artifact evaluator uses an executor which understands the language and runs all of the commands that reference the manuscript in their `purpose` tag.
+An execution description could make this automatic; if an execution description exists, the artifact evaluator uses an executor which understands the language and runs all of the commands that reference the manuscript in their `purpose` tag.
 
 # Conclusion
 
@@ -237,9 +229,12 @@ Developing common standards for specifying how to run computational experiments 
 It presents a compromise where different teams can implement their codes however they see fit while enabling others to run them easily.
 This specification would lead to greater productivity in the (re)use of scientific experiments, empower developers to build tools that leverage those common specifications, and enable software engineering researchers to study reproducibility at scale.
 
-# Appendix I: Example document
+\eject
 
-The following language sample is not the final proposal for the complete vocabulary; the peer-review process is not well-suited to iterate on technical details.
+# Appendix: Example automatic reproducibility specification
+
+The following language sample is not the final proposal for the complete vocabulary; the peer-review process is not ideal to iterate on technical details.
+Instead, we invite technical contributions at the repository, <https://github.com/charmoniumQ/execution-description>.
 The point of this article is to argue that the community should spend effort developing this vocabulary.
 
 \small
