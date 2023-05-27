@@ -93,14 +93,9 @@
                     tmp=$(mktemp --directory)
                     HOME=$(mktemp --directory)
                     export SOURCE_DATE_EPOCH=${builtins.toString date}
-                    set -x +e
                     mkdir $out
-                    ${pkgs.pandoc}/bin/pandoc --to=latex --output=$out/${latexStem}.tex --template=${latexTemplate} ${mainSrc}
-                    pandoc_success=$?
-                    set +x -e
-                    if [ $pandoc_success -ne 0 ]; then
-                      exit $pandoc_success
-                    fi
+                    ${pkgs.pandoc}/bin/pandoc --output=$out/${latexStem}.tex --template=${latexTemplate} ${mainSrc}
+                    ${pkgs.pandoc}/bin/pandoc --output=$out/${latexStem}.docx ${mainSrc}
                     latexmk ${latexmkFlagForEngine} -emulate-aux-dir -outdir=$tmp -auxdir=$tmp -Werror $out/${latexStem}
                     latexmk_status=$?
                     if [ $latexmk_status -ne 0 ]; then
