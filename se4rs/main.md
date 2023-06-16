@@ -6,7 +6,7 @@ strip-comments: yes
 citeproc: yes
 cite-method: biblatex # or natbib or biblatex
 bibliography:
-  - sams-zotero-export
+  - common/sams-zotero-export
   - manual
 link-citations: yes # in-text citation -> biblio entry
 link-bibliography: yes # URLs in biblio
@@ -44,8 +44,8 @@ author:
     orcid: 0000-0002-7767-0067
     email: jbteves@sandia.gov
     affiliation:
-      department:
-        - Software Engineering and Research Department
+      # department:
+      #   - Software Engineering and Research Department
       institution: Sandia National Laboratories
       city: Albuquerque
       state: NM
@@ -56,13 +56,12 @@ author:
     orcid: 0000-0001-5934-7525
     email: dskatz@illinois.edu
     affiliation:
-      institution: University of Illinois Urbana-Champaign Department of Computer Science
+      institution: University of Illinois Urbana-Champaign
       department:
         - Department of Computer Science
-        # Only one department shows in this ACM document type.
-        # - National Center for Supercomputing Applications
-        # - Deparment of Electrical and Computer Engineering
-        # - School of Information Sciences
+        - National Center for Supercomputing Applications
+        - Deparment of Electrical and Computer Engineering
+        - School of Information Sciences
       streetaddress:  201 North Goodwin Avenue MC 258
       city: Urbana
       state: IL
@@ -151,13 +150,13 @@ This work discusses a machine-readable language for specifying how to execute a 
 There is no existing standard place to put the "main" command which executes an experiment.
 e.g., a Makefile which defines a rule for executing the experiment alongside rules for compiling intermediate pieces is not sufficient because there is no machine-readable way to know which of the Make rules executes the experiment.
 Automatically identifying the "main" command would be very useful for those seeking to reproduce results from past experiments or reusing experiments to address new use cases.
-For software engineering researchers, having a standardized way to run many different codes at scale would open new avenues for data mining research on reproducibility (c.f., \cite{collberg_repeatability_2016,zhao_why_2012,trisovic_large-scale_2022}).
+For software engineering researchers, having a standardized way to run many different codes at scale would open new avenues for data mining research on reproducibility (c.f., \cite{collberg_repeatability_2016,trisovic_large-scale_2022,grayson_automatic_2023}).
 We invite interested stakeholders to discuss this language at <https://github.com/charmoniumQ/execution-description>.
 
 Even with workflows, correctly invoking the experiment is still not automatic.
 In a recent study, more than 70% of workflows do not work out-of-the-box \cite{grayson_automatic_2023}; for instance, they might require the user to specify data or configure parameters for their use-case.
 While flexibility is desirable, it should not preclude default invocation in a standard location for testing purposes.
-For example, the Snakemake workflow engine has a standard^[See Snakemake Catalog rules for inclusion <https://snakemake.github.io/snakemake-workflow-catalog/?rules=true>] for documenting the required arguments of its workflows, this standard does not have a place to put an example invocation^[See this discussion  on GitHub <https://github.com/snakemake-workflows/dna-seq-varlociraptor/pull/204#issuecomment-1432876029>].
+For example, the Snakemake workflow engine has a standard^[See Snakemake Catalog rules for inclusion here: <https://snakemake.github.io/snakemake-workflow-catalog/?rules=true>] for documenting the required arguments of its workflows, this standard does not have a place to put an example invocation^[See this discussion  on GitHub: <https://github.com/snakemake-workflows/dna-seq-varlociraptor/pull/204#issuecomment-1432876029>].
 
 # Towards a Standard for Automatic Reproducibility
 
@@ -170,25 +169,25 @@ While we do not expect (or recommend) that the scientific software community con
 One could implement such a specification using linked-data on the semantic web.
 Defining the language in linked data lets one link to existing data and reuse existing ontologies such as RO-crate \cite{soiland-reyes_packaging_2022}, Dublin Core metadata terms \cite{weibel_dublin_2000}, Description of a Project \cite{wilder-james_description_2017}, nanopublications \cite{groth_anatomy_2010}, Citation Typing Ontology \cite{shotton_cito_2010}, and Document Components Ontology \cite{constantin_document_2016}.
 
-At the most basic level, the automatic reproducibility specification should allow one to specify relevant commands and a string describing their purpose (see `#make` the appendix).
+At the most basic level, the automatic reproducibility specification should allow one to specify relevant commands and a string describing their purpose (see `#make` in Appendix \ref{code}).
 The strings could be something like "compile", "run", or "make-figures", which would be used the same way by multiple projects.
 However, the language should go beyond fixed-strings.
 
-The language should allow users to link commands directly to claims made in publications (see `#links-to-pub` in the appendix).
+The language should allow users to link commands directly to claims made in publications (see `#links-to-pub` in Appendix \ref{code}).
 With such a specification, any person (or program) should be able to execute the experiments which generate figures or claims in an accompanying paper.
 For example, the CiTO vocabulary \cite{shotton_cito_2010} can encode to how the result is used as evidence in a specific publication.
 
 The description can be even more granular than a publication.
 One could use the DoCO vocabulary \cite{constantin_document_2016} to point to specific figures, tables, or sentences within a document.
-Alternatively, one could reference specific scientific claims using the Nanopublication vocabulary \cite{groth_anatomy_2010} (see `#links-to-fig`, `#defines-nanopub`, and `#links-to-nanopub` in the appendix).
+Alternatively, one could reference specific scientific claims using the Nanopublication vocabulary \cite{groth_anatomy_2010} (see `#links-to-fig`, `#defines-nanopub`, and `#links-to-nanopub` in Appendix \ref{code}).
 
-RO-crate \cite{soiland-reyes_wf4ever_2013} has terms for describing dependencies between steps, which can be used to encode dependent steps (see `#make-data` and `#plot-figures` in the appendix).
+RO-crate \cite{soiland-reyes_wf4ever_2013} has terms for describing dependencies between steps, which can be used to encode dependent steps (see `#make-data` and `#plot-figures` in Appendix \ref{code}).
 If the code requires a specific computational environment, building that environment can be a prerequisite step.
 The purpose of encoding dependencies is not to usurp the build-system or workflow engine, which both already handle task dependencies;
 if the experiment already uses a workflow, then the specification should invoke that.
 The purpose of task dependencies in the specification is for projects which do not use a workflow engine, or a task that installs the desired workflow engine.
 
-Such a specification could also set bounds on the experiment's parameters, such as the range of valid values or a list of toggleable parameters (see `#example-of-parameters` in the appendix).
+Such a specification could also set bounds on the experiment's parameters, such as the range of valid values or a list of toggleable parameters (see `#example-of-parameters` in Appendix \ref{code}).
 This parameter metadata would enable downstream automated experiments like parameter-space search studies, multi-fidelity uncertainty quantification, and outcome-preserving input minimization.
 
 # Getting Adoption
@@ -231,7 +230,13 @@ This specification would lead to greater productivity in the (re)use of scientif
 
 \eject
 
-# Appendix: Example automatic reproducibility specification
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{manual,common/sams-zotero-export}
+
+\appendix
+
+# Listing of an Example Reproducibility Specification
+\label{code}
 
 The following language sample is not the final proposal for the complete vocabulary; the peer-review process is not ideal to iterate on technical details.
 Instead, we invite technical contributions at the repository, <https://github.com/charmoniumQ/execution-description>.

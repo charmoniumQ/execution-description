@@ -18,78 +18,69 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           nix-utils-lib = nix-utils.lib.${system};
-          nix-documents-lib = nix-documents.lib.${system};
-        in
-          {
-            packages = {
-              default = let
-                date = 1684869979; # date +%s
-                src = ./se4rs;
-                name = "se4rs";
-                mainSrc = "main.md";
-                latexTemplate = "acm-template.tex";
-                texlivePackages = {
-                  inherit (pkgs.texlive)
-                    latexmk
-                    scheme-small
-                    collection-luatex
-                    acmart
-                    amsfonts
-                    amsmath
-                    unicode-math
-                    fancyvrb
-                    tools
-                    booktabs
-                    graphics
-                    hyperref
-                    xcolor
-                    ulem
-                    geometry
-                    setspace
-                    babel
-                    fontspec
-                    selnolig
-                    upquote
-                    microtype
-                    parskip
-                    xurl
-                    bookmark
-                    mdwtools
-                    svg
-                    etoolbox
-                    subfig
-                    caption
-                    float
-                    biblatex
-                    xstring
-                    iftex
-                    xkeyval
-                    environ
-                    totpages
-                    trimspaces
-                    textcase
-                    hyperxmp
-                    ifmtarg
-                    ncctools
-                    cmap
-                    comment
-                    supertabular
-                    draftwatermark
-                    biblatex-trad
-                    natbib
-                  ;
-                };
-                latexStem = "main";
-                latexmkFlagForEngine = "-pdf";
-              in
-                pkgs.stdenvNoCC.mkDerivation {
-                  src = src;
-                  name = name;
-                  buildInputs = [
-                    (pkgs.texlive.combine texlivePackages)
-                  ];
-                  FONTCONFIG_FILE = pkgs.makeFontsConf { fontDirectories = [ ]; };
-                  buildPhase = ''
+          latexDocument =
+            { src, name, latexStem, latexTemplate, mainSrc, date, latexmkFlagForEngine }:
+            pkgs.stdenvNoCC.mkDerivation {
+              src = src;
+              name = name;
+              buildInputs = [
+                (
+                  pkgs.texlive.combine {
+                    inherit (pkgs.texlive)
+                      latexmk
+                      scheme-small
+                      collection-luatex
+                      acmart
+                      amsfonts
+                      amsmath
+                      unicode-math
+                      fancyvrb
+                      tools
+                      booktabs
+                      graphics
+                      hyperref
+                      xcolor
+                      ulem
+                      geometry
+                      setspace
+                      babel
+                      fontspec
+                      selnolig
+                      upquote
+                      microtype
+                      parskip
+                      xurl
+                      bookmark
+                      mdwtools
+                      svg
+                      etoolbox
+                      subfig
+                      caption
+                      float
+                      biblatex
+                      xstring
+                      iftex
+                      xkeyval
+                      environ
+                      totpages
+                      trimspaces
+                      textcase
+                      hyperxmp
+                      ifmtarg
+                      ncctools
+                      cmap
+                      comment
+                      supertabular
+                      draftwatermark
+                      biblatex-trad
+                      natbib
+                      preprint
+                    ;
+                  }
+                )
+              ];
+              FONTCONFIG_FILE = pkgs.makeFontsConf { fontDirectories = [ ]; };
+              buildPhase = ''
                     tmp=$(mktemp --directory)
                     HOME=$(mktemp --directory)
                     export SOURCE_DATE_EPOCH=${builtins.toString date}
@@ -105,15 +96,41 @@
                       exit $latexmk_status
                     fi
                     mv $tmp/${latexStem}.pdf $out
-
-                    # ${pkgs.pandoc}/bin/pandoc --output=$out/main2.tex --template=${latexTemplate} main2.md
-                    # latexmk ${latexmkFlagForEngine} -emulate-aux-dir -outdir=$tmp -auxdir=$tmp -Werror $out/main2
-                    # mv $tmp/main2.pdf $out
                   '';
-                  phases = [ "unpackPhase" "buildPhase" ];
-                }
-              ;
-
+              phases = [ "unpackPhase" "buildPhase" ];
+            }
+          ;
+        in
+          {
+            packages = {
+              dataset = latexDocument {
+                src = nix-utils-lib.mergeDerivations {
+                  packageSet = {
+                    "." = ./dataset;
+                    "common"= ./common;
+                  };
+                };
+                name = "dataset.pdf";
+                mainSrc = "main.md";
+                latexStem = "dataset";
+                latexTemplate = "common/acm-template.tex";
+                date = 1684869979; # date +%s
+                latexmkFlagForEngine = "-pdf"; # pdfLaTeX vs LuaLaTeX vs XeLaTeX
+              };
+              se4rs = latexDocument {
+                src = nix-utils-lib.mergeDerivations {
+                  packageSet = {
+                    "." = ./se4rs;
+                    "common"= ./common;
+                  };
+                };
+                name = "se4rs.pdf";
+                mainSrc = "main.md";
+                latexStem = "se4rs";
+                latexTemplate = "common/acm-template.tex";
+                date = 1684869979; # date +%s
+                latexmkFlagForEngine = "-pdf"; # pdfLaTeX vs LuaLaTeX vs XeLaTeX
+              };
             };
           });
 }

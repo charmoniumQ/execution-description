@@ -18,7 +18,7 @@ $for(author)$
   $if(author.orcid)$\orcid{$author.orcid$}$endif$
   $for(author.affiliation)$
     \affiliation{%
-    $if(author.affiliation.position)$\institution{$author.affiliation.position$}$endif$%
+    $if(author.affiliation.position)$\position{$author.affiliation.position$}$endif$%
     $if(author.affiliation.institution)$\institution{$author.affiliation.institution$}$endif$%
     $for(author.affiliation.department)$\department{$author.affiliation.department$}$endfor$%
     $if(author.affiliation.streetaddress)$\streetaddress{$author.affiliation.streetaddress$}$endif$%
@@ -207,9 +207,6 @@ $if(acks)$\begin{acks}$acks$\end{acks}$endif$
 %$if(bibliography)$
 %\printbibliography
 %$endif$
-
-\bibliographystyle{ACM-Reference-Format}
-\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
 
 $for(include-after)$
 $include-after$
