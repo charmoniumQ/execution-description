@@ -19,7 +19,7 @@ author:
     orcid: 0000-0001-5411-356X
     email: grayson5@illinois.edu
     affiliation:
-      institution: University of Illinois Urbana-Champaign
+      institution: University of Illinois Urbana Champaign
       department:
         - Department of Computer Science
       streetaddress:  201 North Goodwin Avenue MC 258
@@ -43,7 +43,7 @@ author:
     orcid: 0000-0001-5023-3492
     email: marinov@illinois.edu
     affiliation:
-      institution: University of Illinois Urbana-Champaign
+      institution: University of Illinois Urbana Champaign
       department:
         - Department of Computer Science
       streetaddress:  201 North Goodwin Avenue MC 258
@@ -55,7 +55,7 @@ author:
     orcid: 0000-0001-5934-7525
     email: dskatz@illinois.edu
     affiliation:
-      institution: University of Illinois Urbana-Champaign
+      institution: University of Illinois Urbana Champaign
       department:
         - Department of Computer Science
         - National Center for Supercomputing Applications
@@ -106,13 +106,13 @@ topmatter: printacmref=false,printccs=false,printfolios=false
 shortauthors: Grayson et al.
 ---
 
-The community of researchers should collaborate to create a FAIR<!--\cite --> dataset of executions of computational experiments.
+We call on the researcher community to collaborate to create a FAIR<!--\cite --> dataset of executions of computational experiments.
 
 There are registries of workflows, which are often computational experiments, such as WorkflowHub<!--\cite{ferreira_da_silva_workflowhub_2020} -->, but these registries do not store any execution data, not even a command for executing them.
 
-While some of the execution artifacts are large, some useful execution details are small enough, including: the command used to execute the experiment, process success, date/time, platform (OS and architecture), compute resources used (CPU time, wall time, memory, disk space, network bandwidth). For each file read or written: path or URL, type (returned by `file`), 'summary' (hash for binary files, summary statistics for numerical data, etc.), truncated contents.
+While some execution artifacts are large, some useful execution details are small, including: the command used to execute the experiment, process success, date/time, platform (OS and architecture), compute resources used (CPU time, wall time, memory, disk space, network bandwidth). For each file read or written: path or URL, type (returned by `file`), 'summary' (hash for binary files, summary statistics for numerical data, etc.), truncated contents.
 
-The above are automatically collectible from an execution without domain knowledge; if a domain specialist is available, they could add a machine-readable description of what the input variables are and how the outputs are to be compared.
+The above can automatically be collected from an execution without domain knowledge; if a domain specialist is available, they could add a machine-readable description of what the input variables are and how the outputs are to be compared.
 
 <!--
 - For each numerical field in each input file or command argument,
@@ -125,16 +125,16 @@ The above are automatically collectible from an execution without domain knowled
 
 For an individual project, this eases answering the following questions:
 
-- Is the experiment replicable? How big of a machine is needed to replicate? What output should one expect? What files need to exist? If the end output is different, which is the earliest intermediate file that differs significantly?
+- Is the experiment replicable? How big of a machine is needed to replicate it? What output should one expect? What files need to exist? If the end output is different, which is the earliest intermediate file that differs significantly?
 - Can tolerably similar output be produced with fewer computational resources (by changing the fidelity parameters)?
 
-A collection of projects with this data enables the following research questions:
+A collection of projects with this data would enable the following research questions:
 
 - What libraries do these computational experiments use or transitively use?
 - Are these computational experiments repeatable in the short-term? What about the long-term (months or years)? Or repeatable within some margin of error? For those that crash, what are the common causes of crashes (could compare to  Zhao et al.<!--\cite{zhao_why_2012}-->)?
 
 Large-scale studies are the best candidates to collect this dataset.
-Most large-scale studies, like Zhao et al.<!--\cite{zhao_why_2012}-->, do not share any execution details of individual computational experiments (only aggregate results).
+Most large-scale studies, like Zhao et al.<!--\cite{zhao_why_2012}-->, do not share execution details of individual computational experiments, but only aggregate results.
 Collberg and Proebsting<!--\cite{collberg_repeatability_2016}--> report the success or failure and how to run individual computational experiments but no other data.
 Trisovic et al.<!--\cite{trisovic_large-scale_2022}--> report the success or failure of individual R scripts in Harvard Dataverse but no other data.
 
