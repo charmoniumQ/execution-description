@@ -19,6 +19,7 @@ which is our proposed execution-description vocabulary, http://example.org/execu
          xmlns:doco="http://purl.org/spar/doco/2015-07-03"
          xmlns:prov="http://www.w3.org/TR/2013/PR-prov-o-20130312/"
          xmlns:wfdesc="http://purl.org/wf4ever/wfdesc#"
+         xmlns="http://example.org/execution-description/1.0/"
          xml:lang="en"
          >
 
