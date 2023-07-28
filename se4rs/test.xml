@@ -15,11 +15,12 @@ which is our proposed execution-description vocabulary, http://example.org/execu
          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
          xmlns:dc="http://purl.org/dc/elements/1.1/"
          xmlns:wikibase="http://wikiba.se/ontology#"
-         xmlns:cito="http://purl.org/spar/cito"
-         xmlns:doco="http://purl.org/spar/doco/2015-07-03"
-         xmlns:prov="http://www.w3.org/TR/2013/PR-prov-o-20130312/"
+         xmlns:cito="http://purl.org/spar/cito/"
+         xmlns:doco="http://purl.org/spar/doco/"
+         xmlns:prov="http://www.w3.org/ns/prov#role"
          xmlns:wfdesc="http://purl.org/wf4ever/wfdesc#"
-         xmlns="http://example.org/execution-description/1.0/"
+         xmlns="http://example.org/execution-description/"
+         xml:base="https://example.com/software-experiment-23#"
          xml:lang="en"
          >
 
@@ -119,7 +120,7 @@ which is our proposed execution-description vocabulary, http://example.org/execu
   </process>
 
   <!-- Here, we add parameters to the command -->
-  <process rdf:label="example-of-parameters">
+  <process rdfs:label="example-of-parameters">
     <!-- These might be template filled like so: -->
     <command>./generate ${max_resolution} ${rounds}</command>
     <wfdesc:Parameter rdfs:label="max_resolution" />
