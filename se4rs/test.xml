@@ -98,11 +98,11 @@ which is our proposed execution-description vocabulary, http://example.org/execu
         <wikibase:Statement>
           <rdf:Description>
             <!-- Q12156 refers to malaria -->
-            <subject rdf:resource="https://www.wikidata.org/entity/Q12156" />
+            <rdf:subject rdf:resource="https://www.wikidata.org/entity/Q12156" />
             <!-- P1060 refers to disease transmission process (read: "is transmitted by") -->
-            <predicate rdf:resource="http://www.wikidata.org/prop/P1060" />
+            <rdf:predicate rdf:resource="http://www.wikidata.org/prop/P1060" />
             <!-- Q15304532 refers to mosquitoes -->
-            <object rdf:resource="https://www.wikidata.org/entity/Q15304532" />
+            <rdf:object rdf:resource="https://www.wikidata.org/entity/Q15304532" />
           </rdf:Description>
         </wikibase:Statement>
       </cito:supports>
@@ -120,10 +120,15 @@ which is our proposed execution-description vocabulary, http://example.org/execu
   </process>
 
   <!-- Here, we add parameters to the command -->
-  <process rdfs:label="example-of-parameters">
+  <wfdesc:process rdfs:label="example-of-parameters">
     <!-- These might be template filled like so: -->
     <command>./generate ${max_resolution} ${rounds}</command>
-    <wfdesc:Parameter rdfs:label="max_resolution" />
+    <wfdesc:hasInput>
+           <wfdesc:Parameter rdfs:label="max_resolution" />
+    </wfdesc:hasInput>
+    <wfdesc:hasInput>
+           <wfdesc:Parameter rdfs:label="rounds" />
+    </wfdesc:hasInput>           
   </process>
 
 </rdf:RDF>
